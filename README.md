@@ -13,3 +13,4 @@ Agregador de notícias que coleta machentes, notícias e postagens de todos os p
 
 - [@gabriel](https://www.github.com/Gabriel-1201)
 - [@naveganth](https://www.github.com/naveganth)
+- [@pcosta23](https://github.com/pcosta23)
