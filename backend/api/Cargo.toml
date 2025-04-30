@@ -7,3 +7,6 @@ edition = "2024"
 scraper = {path = "../scraper"}
 db = {path = "../db"}
 chrono = "0.4.40"
+tokio = { version = "1", features = ["full"] }
+axum = "0.8.4"
+dotenvy = "0.15.7"
