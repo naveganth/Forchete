@@ -1,16 +1,16 @@
 FROM rust:1.86-bookworm
 
-COPY .api/src .api/src
-COPY .api/Cargo.toml .api/Cargo.toml
+COPY ./api/src ./api/src
+COPY ./api/Cargo.toml ./api/Cargo.toml
 
-COPY .db/src .db/src
-COPY .db/Cargo.toml .db/Cargo.toml
+COPY ./db/src ./db/src
+COPY ./db/Cargo.toml ./db/Cargo.toml
 
-COPY .noticia/src .noticia/src
-COPY .noticia/Cargo.toml .noticia/Cargo.toml
+COPY ./noticia/src ./noticia/src
+COPY ./noticia/Cargo.toml ./noticia/Cargo.toml
 
-COPY .scraper/src .scraper/src
-COPY .scraper/Cargo.toml .scraper/Cargo.toml
+COPY ./scraper/src ./scraper/src
+COPY ./scraper/Cargo.toml ./scraper/Cargo.toml
 
 COPY ./Cargo.toml ./Cargo.toml
 
