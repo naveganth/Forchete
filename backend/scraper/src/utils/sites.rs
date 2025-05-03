@@ -59,6 +59,8 @@ fn noticia_por_post(
     let titulo: String;
     let data: NaiveDate;
     let localidades: Vec<String>;
+    let imagem: Option<String>;
+    let seletor_imagem = Selector::parse("meta[property=og:image]")?;
 
     if let Some(t) = html.select(&seletor_titulo).next() {
         titulo = t.inner_html();
@@ -82,11 +84,17 @@ fn noticia_por_post(
         return Err("Sem conteúdo no post".into())
     };
 
+    if let Some(i) = html.select(&seletor_imagem).next() {
+        imagem = i.attr("content").map(|a| a.to_string());
+    } else {
+        imagem = None;
+    }
+
     if localidades.is_empty() {
         return Err("notícia sem localidades".into())
     }
 
-    let noticia = Noticia::new(None, titulo, data, url, localidades);
+    let noticia = Noticia::new(None, titulo, data, url, localidades, imagem);
     
     Ok(noticia)
 }
