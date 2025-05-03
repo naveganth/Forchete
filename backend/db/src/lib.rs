@@ -7,7 +7,9 @@ use chrono::NaiveDate;
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
 pub fn criar_pool() -> Result<Pool>{
-    dotenvy::dotenv()?;
+    if cfg!(debug_assertions) {
+        dotenvy::dotenv()?;
+    }
     let url = env::var("BANCO_URL")?;
     let pool = Pool::new(url.as_str())?;
     let mut conn = pool.get_conn()?;

@@ -18,7 +18,10 @@ type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    dotenvy::dotenv()?;
+    if cfg!(debug_assertions) {
+        dotenvy::dotenv()?;
+    }
+    
     let intervalo = env::var("MINUTOS_INTERVALO_BUSCA")?.parse::<u64>()?;
     let pool_thread = db::criar_pool()?;
     let pool_api = Arc::new(db::criar_pool()?);
