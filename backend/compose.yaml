@@ -1,0 +1,17 @@
+services:
+  app:
+    container_name: projeti_2025_1
+    build: .
+    restart: always
+    volumes:
+      - /home/gabriel/container-data/notificacoes-bluesky/banco.db:/banco.db
+    environment:
+      - MINUTOS_INTERVALO_BUSCA=10
+      - BANCO_URL=mysql://root:senhasupersecretaesigilosa@db:3306/projeti20251
+  db:
+    image: mysql
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=senhasupersecretaesigilosa
+    # ports:
+    #   - "3306:3306"
