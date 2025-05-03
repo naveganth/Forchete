@@ -49,7 +49,10 @@ dependencies = [
  "chrono",
  "db",
  "dotenvy",
+ "mysql",
  "scraper 0.1.0",
+ "serde",
+ "serde_json",
  "tokio",
 ]
 
@@ -1234,6 +1237,7 @@ name = "noticia"
 version = "0.1.0"
 dependencies = [
  "chrono",
+ "serde",
 ]
 
 [[package]]
