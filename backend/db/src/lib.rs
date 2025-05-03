@@ -128,7 +128,8 @@ pub fn pegar_noticias(conn: &mut PooledConn, regiao: String, data_inicio: NaiveD
             titulo, 
             data_post, 
             link, 
-            regioes
+            regioes,
+            imagem
         FROM
             noticias
         WHERE   
