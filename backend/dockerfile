@@ -1,4 +1,4 @@
-FROM rust:stable
+FROM rust:1.86-bookworm
 
 COPY .api/src .api/src
 COPY .api/Cargo.toml .api/Cargo.toml
