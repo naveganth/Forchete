@@ -115,6 +115,7 @@ pub fn pegar_noticias(conn: &mut PooledConn, regiao: String, data_inicio: NaiveD
         WHERE   
             data_post >= :data_inicio AND
             data_post <= :data_fim
+        ORDER BY data_post DESC, id DESC
         LIMIT :quantidade
         OFFSET :offset;
     "},
@@ -131,11 +132,12 @@ pub fn pegar_noticias(conn: &mut PooledConn, regiao: String, data_inicio: NaiveD
             data_post >= :data_inicio AND
             data_post <= :data_fim AND
             regioes in (:regiao)
+        ORDER BY data_post DESC, id DESC
         LIMIT :quantidade
         OFFSET :offset;
     "} 
     };
-    
+
     let mut linhas: Vec<std::result::Result<Row, Error>> = Vec::new();
     conn.exec_iter(query, params! {"data_inicio" => data_inicio, "data_fim" => data_fim, "quantidade" => quantidade, "offset" => offset, "regiao" => regiao} ).map(|mut res| {
         linhas = res.iter().unwrap().collect::<Vec<std::result::Result<Row, Error>>>();
