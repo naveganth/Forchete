@@ -18,7 +18,8 @@ pub fn criar_pool() -> Result<Pool>{
         titulo varchar(255) not null, 
         data_post date not null,
         link varchar(255) not null,
-        regioes varchar(255) not null
+        regioes varchar(255),
+        imagem varchar(255)
     );";
 
     match conn.query_drop::<&str>(query_inicial) {
@@ -79,14 +80,15 @@ pub fn guardar_noticia(noticia: &Noticia, conn: &mut PooledConn) {
                 titulo, 
                 data_post, 
                 link, 
-                regioes
+                regioes,
+                imagem
             ) VALUES ( 
-                ?, ?, ?, ? 
+                ?, ?, ?, ?, ? 
             ); 
         ";
 
-        match conn.exec_drop::<&str, (String, NaiveDate, String, String)>(
-            query, (noticia.titulo.clone(), noticia.data_post, noticia.link.clone(), noticia.regioes.join(", "))
+        match conn.exec_drop::<&str, (String, NaiveDate, String, String, Option<String>)>(
+            query, (noticia.titulo.clone(), noticia.data_post, noticia.link.clone(), noticia.regioes.join(", "), noticia.imagem.clone())
         ) {
             Ok(_) => {
                 println!("Notícia inserida no banco de dados: '{}'", noticia.titulo);
@@ -109,7 +111,8 @@ pub fn pegar_noticias(conn: &mut PooledConn, regiao: String, data_inicio: NaiveD
             titulo, 
             data_post, 
             link, 
-            regioes
+            regioes,
+            imagem
         FROM
             noticias
         WHERE   
@@ -150,8 +153,9 @@ pub fn pegar_noticias(conn: &mut PooledConn, regiao: String, data_inicio: NaiveD
             let Some(data_post) = linha.as_ref().unwrap().get::<NaiveDate, &str>("data_post") else { return Err("Notícia não tem campo data_post".into()) };
             let Some(link) = linha.as_ref().unwrap().get::<String, &str>("link") else { return Err("Notícia não tem campo link".into()) };
             let Some(regioes) = linha.as_ref().unwrap().get::<String, &str>("regioes") else { return Err("Notícia não tem campo regioes".into()) };
+            let Some(imagem) = linha.as_ref().unwrap().get::<Option<String>, &str>("imagem") else { return Err("Notícia não tem imagem".into()) };
 
-            noticias.push(Noticia::new(Some(id), titulo, data_post, link, regioes.split(", ").map(|a| a.to_string()).collect::<Vec<String>>()));
+            noticias.push(Noticia::new(Some(id), titulo, data_post, link, regioes.split(", ").map(|a| a.to_string()).collect::<Vec<String>>(), imagem));
         }
     }
     Ok(noticias)
