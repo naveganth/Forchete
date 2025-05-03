@@ -60,7 +60,7 @@ fn noticia_por_post(
     let data: NaiveDate;
     let localidades: Vec<String>;
     let imagem: Option<String>;
-    let seletor_imagem = Selector::parse("meta[property=og:image]")?;
+    let seletor_imagem = Selector::parse(r"meta[property=og\:image]")?;
 
     if let Some(t) = html.select(&seletor_titulo).next() {
         titulo = t.inner_html();
