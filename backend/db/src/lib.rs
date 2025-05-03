@@ -1,5 +1,6 @@
 use std::env;
 use noticia::Noticia;
+use mysql::*;
 use mysql::{prelude::*, Error, Pool, PooledConn, Row};
 use chrono::NaiveDate;
 
@@ -99,9 +100,10 @@ pub fn guardar_noticia(noticia: &Noticia, conn: &mut PooledConn) {
     }
 }
 
-pub fn pegar_noticias(conn: &mut PooledConn, data_inicio: NaiveDate, data_fim: NaiveDate, quantidade: u32, offset: u32) -> Result<Vec<Noticia>> {
+pub fn pegar_noticias(conn: &mut PooledConn, regiao: String, data_inicio: NaiveDate, data_fim: NaiveDate, quantidade: u32, offset: u32) -> Result<Vec<Noticia>> {
     let mut noticias: Vec<Noticia> = Vec::new();
-    let query = "
+    let query = match regiao.is_empty() {
+        true => { "
         SELECT 
             id,
             titulo, 
@@ -111,13 +113,31 @@ pub fn pegar_noticias(conn: &mut PooledConn, data_inicio: NaiveDate, data_fim: N
         FROM
             noticias
         WHERE   
-            data_post >= ? AND
-            data_post <= ?
-        LIMIT ?
-        OFFSET ?
-    ";
+            data_post >= :data_inicio AND
+            data_post <= :data_fim
+        LIMIT :quantidade
+        OFFSET :offset;
+    "},
+        false => { "
+        SELECT 
+            id,
+            titulo, 
+            data_post, 
+            link, 
+            regioes
+        FROM
+            noticias
+        WHERE   
+            data_post >= :data_inicio AND
+            data_post <= :data_fim AND
+            regioes in (:regiao)
+        LIMIT :quantidade
+        OFFSET :offset;
+    "} 
+    };
+    
     let mut linhas: Vec<std::result::Result<Row, Error>> = Vec::new();
-    conn.exec_iter(query, (data_inicio, data_fim, quantidade, offset)).map(|mut res| {
+    conn.exec_iter(query, params! {"data_inicio" => data_inicio, "data_fim" => data_fim, "quantidade" => quantidade, "offset" => offset, "regiao" => regiao} ).map(|mut res| {
         linhas = res.iter().unwrap().collect::<Vec<std::result::Result<Row, Error>>>();
     })?;
 
