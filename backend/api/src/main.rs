@@ -13,6 +13,7 @@ use serde_json::{Value, json};
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use mysql::Pool;
+use tower_http::cors::{Any, CorsLayer};
 
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
