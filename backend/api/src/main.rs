@@ -13,7 +13,7 @@ use serde_json::{Value, json};
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use mysql::Pool;
-use tower_http::cors::{Any, CorsLayer};
+use tower_http::cors::CorsLayer;
 
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
@@ -29,7 +29,8 @@ async fn main() -> Result<()> {
     
     let app = Router::new()
         .route("/pegar_noticias", get(pegar_noticias))
-        .with_state(pool_api);
+        .with_state(pool_api)
+        .layer(CorsLayer::permissive());
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     
     thread::spawn(move || {
