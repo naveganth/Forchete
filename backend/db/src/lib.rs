@@ -1,12 +1,15 @@
 use std::env;
 use noticia::Noticia;
+use mysql::*;
 use mysql::{prelude::*, Error, Pool, PooledConn, Row};
 use chrono::NaiveDate;
 
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
 pub fn criar_pool() -> Result<Pool>{
-    dotenvy::dotenv()?;
+    if cfg!(debug_assertions) {
+        dotenvy::dotenv()?;
+    }
     let url = env::var("BANCO_URL")?;
     let pool = Pool::new(url.as_str())?;
     let mut conn = pool.get_conn()?;
@@ -17,7 +20,8 @@ pub fn criar_pool() -> Result<Pool>{
         titulo varchar(255) not null, 
         data_post date not null,
         link varchar(255) not null,
-        regioes varchar(255) not null
+        regioes varchar(255),
+        imagem varchar(255)
     );";
 
     match conn.query_drop::<&str>(query_inicial) {
@@ -78,14 +82,15 @@ pub fn guardar_noticia(noticia: &Noticia, conn: &mut PooledConn) {
                 titulo, 
                 data_post, 
                 link, 
-                regioes
+                regioes,
+                imagem
             ) VALUES ( 
-                ?, ?, ?, ? 
+                ?, ?, ?, ?, ? 
             ); 
         ";
 
-        match conn.exec_drop::<&str, (String, NaiveDate, String, String)>(
-            query, (noticia.titulo.clone(), noticia.data_post, noticia.link.clone(), noticia.regioes.join(", "))
+        match conn.exec_drop::<&str, (String, NaiveDate, String, String, Option<String>)>(
+            query, (noticia.titulo.clone(), noticia.data_post, noticia.link.clone(), noticia.regioes.join(", "), noticia.imagem.clone())
         ) {
             Ok(_) => {
                 println!("Notícia inserida no banco de dados: '{}'", noticia.titulo);
@@ -99,25 +104,48 @@ pub fn guardar_noticia(noticia: &Noticia, conn: &mut PooledConn) {
     }
 }
 
-pub fn pegar_noticias(conn: &mut PooledConn, data_inicio: NaiveDate, data_fim: NaiveDate, quantidade: u32, offset: u32) -> Result<Vec<Noticia>> {
+pub fn pegar_noticias(conn: &mut PooledConn, regiao: String, data_inicio: NaiveDate, data_fim: NaiveDate, quantidade: u32, offset: u32) -> Result<Vec<Noticia>> {
     let mut noticias: Vec<Noticia> = Vec::new();
-    let query = "
+    let query = match regiao.is_empty() {
+        true => { "
         SELECT 
             id,
             titulo, 
             data_post, 
             link, 
-            regioes
+            regioes,
+            imagem
         FROM
             noticias
         WHERE   
-            data_post >= ? AND
-            data_post <= ?
-        LIMIT ?
-        OFFSET ?
-    ";
+            data_post >= :data_inicio AND
+            data_post <= :data_fim
+        ORDER BY data_post DESC, id DESC
+        LIMIT :quantidade
+        OFFSET :offset;
+    "},
+        false => { "
+        SELECT 
+            id,
+            titulo, 
+            data_post, 
+            link, 
+            regioes,
+            imagem
+        FROM
+            noticias
+        WHERE   
+            data_post >= :data_inicio AND
+            data_post <= :data_fim AND
+            regioes in (:regiao)
+        ORDER BY data_post DESC, id DESC
+        LIMIT :quantidade
+        OFFSET :offset;
+    "} 
+    };
+
     let mut linhas: Vec<std::result::Result<Row, Error>> = Vec::new();
-    conn.exec_iter(query, (data_inicio, data_fim, quantidade, offset)).map(|mut res| {
+    conn.exec_iter(query, params! {"data_inicio" => data_inicio, "data_fim" => data_fim, "quantidade" => quantidade, "offset" => offset, "regiao" => regiao} ).map(|mut res| {
         linhas = res.iter().unwrap().collect::<Vec<std::result::Result<Row, Error>>>();
     })?;
 
@@ -128,8 +156,9 @@ pub fn pegar_noticias(conn: &mut PooledConn, data_inicio: NaiveDate, data_fim: N
             let Some(data_post) = linha.as_ref().unwrap().get::<NaiveDate, &str>("data_post") else { return Err("Notícia não tem campo data_post".into()) };
             let Some(link) = linha.as_ref().unwrap().get::<String, &str>("link") else { return Err("Notícia não tem campo link".into()) };
             let Some(regioes) = linha.as_ref().unwrap().get::<String, &str>("regioes") else { return Err("Notícia não tem campo regioes".into()) };
+            let Some(imagem) = linha.as_ref().unwrap().get::<Option<String>, &str>("imagem") else { return Err("Notícia não tem imagem".into()) };
 
-            noticias.push(Noticia::new(Some(id), titulo, data_post, link, regioes.split(", ").map(|a| a.to_string()).collect::<Vec<String>>()));
+            noticias.push(Noticia::new(Some(id), titulo, data_post, link, regioes.split(", ").map(|a| a.to_string()).collect::<Vec<String>>(), imagem));
         }
     }
     Ok(noticias)

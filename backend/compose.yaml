@@ -1,0 +1,27 @@
+services:
+  app:
+    container_name: projeti_2025_1
+    build: .
+    restart: always
+    environment:
+      - TZ=America/Belem
+      - MINUTOS_INTERVALO_BUSCA=10
+      - BANCO_URL=mysql://root:senhasupersecretaesigilosa@db:3306/projeti20251
+    ports:
+      - "64728:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: mysql
+    restart: always
+    environment:
+      - TZ=America/Belem
+      - MYSQL_ROOT_PASSWORD=senhasupersecretaesigilosa
+      - MYSQL_DATABASE=projeti20251
+    volumes:
+      - ../../mysql:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
