@@ -1,4 +1,4 @@
-# Fourchete
+# Forchete
 
 Agregador de notícias que coleta machentes, notícias e postagens de todos os portais de Macapá e os organiza em artigos a serem disponibilizados em um portal.
 
