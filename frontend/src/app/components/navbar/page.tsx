@@ -12,17 +12,17 @@ const links = [
 ];
 
 export function HeaderSearch() {
-  const [opened, { toggle }] = useDisclosure(false);
+  const [opened, { toggle, close }] = useDisclosure(false);
 
   const items = links.map((link) => (
     <a
       key={link.label}
       href={link.link}
       className={classes.link}
-      onClick={(event) => 
-        {event.preventDefault()
-          close();
-        }}
+      onClick={(event) => {
+        event.preventDefault();
+        close();
+      }}
     >
       {link.label}
     </a>
@@ -34,21 +34,21 @@ export function HeaderSearch() {
         <Group>
           <Image src="/next.svg" alt="Logo" w={"auto"} h={28} />
         </Group>
-          <Autocomplete
-            className={classes.search}
-            placeholder="Pesquisar"
-            leftSection={<IconSearch size={16} stroke={1.5} />}
-            data={[
-              "React",
-              "Angular",
-              "Vue",
-              "Next.js",
-              "Riot.js",
-              "Svelte",
-              "Blitz.js",
-            ]}
-            visibleFrom="sm"
-          />
+        <Autocomplete
+          className={classes.search}
+          placeholder="Pesquisar"
+          leftSection={<IconSearch size={16} stroke={1.5} />}
+          data={[
+            "React",
+            "Angular",
+            "Vue",
+            "Next.js",
+            "Riot.js",
+            "Svelte",
+            "Blitz.js",
+          ]}
+          visibleFrom="sm"
+        />
         <Group>
           <Burger opened={opened} onClick={toggle} size="sm" hiddenFrom="sm" />
           <Group ml={50} gap={5} className={classes.links} visibleFrom="sm">

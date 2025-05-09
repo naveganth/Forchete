@@ -1,12 +1,8 @@
 import { HeaderSearch } from "../app/components/navbar/page";
 import { FooterLinks } from "../app/components/footer/page";
+import { ColorSchemeScript, MantineProvider, mantineHtmlProps } from "@mantine/core";
 import "./globals.css";
 import "@mantine/core/styles.css";
-import {
-  ColorSchemeScript,
-  MantineProvider,
-  mantineHtmlProps,
-} from "@mantine/core";
 
 export default function RootLayout({
   children,
