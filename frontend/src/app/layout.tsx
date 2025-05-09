@@ -1,16 +1,32 @@
+import { HeaderSearch } from "../app/components/navbar/page";
 import "./globals.css";
-import {Navbar} from "../app/components/navbar/page";
+import "@mantine/core/styles.css";
+import {
+  ColorSchemeScript,
+  MantineProvider,
+  mantineHtmlProps,
+} from "@mantine/core";
+
+export const metadata = {
+  title: "My Mantine app",
+  description: "I have followed setup instructions carefully",
+};
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
-      <body className={`antialiased`}>
-        <Navbar/>
-        {children}
+    <html lang="en" {...mantineHtmlProps}>
+      <head>
+        <ColorSchemeScript />
+      </head>
+      <body>
+        <MantineProvider>
+          <HeaderSearch />
+          {children}
+        </MantineProvider>
       </body>
     </html>
   );
