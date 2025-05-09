@@ -27,12 +27,11 @@ export function HeaderSearch() {
       {link.label}
     </a>
   ));
-// 
+
   return (
     <header className={classes.header}>
       <div className={classes.inner}>
         <Group>
-          <Burger opened={opened} onClick={toggle} size="sm" hiddenFrom="sm" />
           <Image src="/next.svg" alt="Logo" w={"auto"} h={28} />
         </Group>
           <Autocomplete
@@ -51,6 +50,7 @@ export function HeaderSearch() {
             visibleFrom="sm"
           />
         <Group>
+          <Burger opened={opened} onClick={toggle} size="sm" hiddenFrom="sm" />
           <Group ml={50} gap={5} className={classes.links} visibleFrom="sm">
             {items}
           </Group>

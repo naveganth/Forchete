@@ -1,4 +1,5 @@
 import { HeaderSearch } from "../app/components/navbar/page";
+import { FooterLinks } from "../app/components/footer/page";
 import "./globals.css";
 import "@mantine/core/styles.css";
 import {
@@ -19,8 +20,9 @@ export default function RootLayout({
       </head>
       <body>
         <MantineProvider>
-          <HeaderSearch />
+          <HeaderSearch/>
           {children}
+          <FooterLinks/>
         </MantineProvider>
       </body>
     </html>
