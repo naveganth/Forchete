@@ -1,35 +1,39 @@
 "use client";
 
-import { IconBrandInstagram, IconBrandTwitter, IconBrandYoutube } from '@tabler/icons-react';
-import { ActionIcon, Container, Group, Text, Image} from '@mantine/core';
-import classes from './FooterLinks.module.css';
+import {
+  IconBrandInstagram,
+  IconBrandTwitter,
+  IconBrandYoutube,
+} from "@tabler/icons-react";
+import { ActionIcon, Container, Group, Text, Image } from "@mantine/core";
+import classes from "./FooterLinks.module.css";
 
 const data = [
   {
-    title: 'About',
+    title: "About",
     links: [
-      { label: 'Features', link: '#' },
-      { label: 'Pricing', link: '#' },
-      { label: 'Support', link: '#' },
-      { label: 'Forums', link: '#' },
+      { label: "Features", link: "#" },
+      { label: "Pricing", link: "#" },
+      { label: "Support", link: "#" },
+      { label: "Forums", link: "#" },
     ],
   },
   {
-    title: 'Project',
+    title: "Project",
     links: [
-      { label: 'Contribute', link: '#' },
-      { label: 'Media assets', link: '#' },
-      { label: 'Changelog', link: '#' },
-      { label: 'Releases', link: '#' },
+      { label: "Contribute", link: "#" },
+      { label: "Media assets", link: "#" },
+      { label: "Changelog", link: "#" },
+      { label: "Releases", link: "#" },
     ],
   },
   {
-    title: 'Community',
+    title: "Community",
     links: [
-      { label: 'Join Discord', link: '#' },
-      { label: 'Follow on Twitter', link: '#' },
-      { label: 'Email newsletter', link: '#' },
-      { label: 'GitHub discussions', link: '#' },
+      { label: "Join Discord", link: "#" },
+      { label: "Follow on Twitter", link: "#" },
+      { label: "Email newsletter", link: "#" },
+      { label: "GitHub discussions", link: "#" },
     ],
   },
 ];
@@ -37,7 +41,7 @@ const data = [
 export function FooterLinks() {
   const groups = data.map((group) => {
     const links = group.links.map((link, index) => (
-      <Text<'a'>
+      <Text<"a">
         key={index}
         className={classes.link}
         component="a"
@@ -60,7 +64,7 @@ export function FooterLinks() {
     <footer className={classes.footer}>
       <Container className={classes.inner}>
         <div className={classes.logo}>
-            <Image src="/next.svg" alt="Logo" w={"auto"} h={28} />
+          <Image src="/next.svg" alt="Logo" w={"auto"} h={28} />
           <Text size="xs" c="dimmed" className={classes.description}>
             Build fully functional accessible web applications faster than ever
           </Text>
@@ -72,7 +76,12 @@ export function FooterLinks() {
           © 2020 mantine.dev. All rights reserved.
         </Text>
 
-        <Group gap={0} className={classes.social} justify="flex-end" wrap="nowrap">
+        <Group
+          gap={0}
+          className={classes.social}
+          justify="flex-end"
+          wrap="nowrap"
+        >
           <ActionIcon size="lg" color="gray" variant="subtle">
             <IconBrandTwitter size={18} stroke={1.5} />
           </ActionIcon>
