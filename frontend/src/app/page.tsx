@@ -1,6 +1,5 @@
 "use client";
 
-
 import { puxarNoticias } from "./lib/puxarNoticias";
 import {
   Badge,
