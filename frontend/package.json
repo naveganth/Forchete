@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@mantine/carousel": "^8.0.0",
     "@mantine/core": "^8.0.0",
     "@mantine/dates": "^8.0.0",
     "@mantine/form": "^8.0.0",
@@ -20,6 +21,8 @@
     "@mantinex/mantine-logo": "^2.0.0",
     "@tabler/icons-react": "^3.31.0",
     "dayjs": "^1.11.13",
+    "embla-carousel": "^8.6.0",
+    "embla-carousel-react": "^8.6.0",
     "json-server": "^1.0.0-beta.3",
     "next": "15.3.1",
     "react": "^19.0.0",
