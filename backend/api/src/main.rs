@@ -50,9 +50,9 @@ async fn main() -> Result<()> {
                     continue;
                 }
             };
-
+    
             scraper::salvar_noticias(lista_noticias, conn);
-
+    
             println!("Scraper: Tudo feito aqui patrão. Esperando {} minutos...", &intervalo);
             thread::sleep(Duration::from_secs(intervalo * 60));
         }
@@ -69,7 +69,7 @@ struct QueryNoticias {
     data_inicio: NaiveDate, 
     data_fim: NaiveDate, 
     quantidade: u32, 
-    offset: Option<u32>
+    page: Option<u32>
 }
 
 async fn pegar_noticias(State(pool): State<Arc<Pool>>, query: Query<QueryNoticias>) -> Json<Value>{
@@ -81,7 +81,7 @@ async fn pegar_noticias(State(pool): State<Arc<Pool>>, query: Query<QueryNoticia
         None => String::new()
     };
 
-    let offset = match &query.offset {
+    let page = match &query.page {
         Some(a) => { a.clone() },
         None => { 0 }
     };
@@ -92,7 +92,7 @@ async fn pegar_noticias(State(pool): State<Arc<Pool>>, query: Query<QueryNoticia
         query.data_inicio, 
         query.data_fim, 
         query.quantidade,
-        offset
+        page
     ) {
         Ok(a) => {a},
         Err(e) => {return Json(json!(format!("{}", e)))}

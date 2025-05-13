@@ -104,7 +104,8 @@ pub fn guardar_noticia(noticia: &Noticia, conn: &mut PooledConn) {
     }
 }
 
-pub fn pegar_noticias(conn: &mut PooledConn, regiao: String, data_inicio: NaiveDate, data_fim: NaiveDate, quantidade: u32, offset: u32) -> Result<Vec<Noticia>> {
+pub fn pegar_noticias(conn: &mut PooledConn, regiao: String, data_inicio: NaiveDate, data_fim: NaiveDate, quantidade: u32, page: u32) -> Result<Vec<Noticia>> {
+    let offset = quantidade * page;
     let mut noticias: Vec<Noticia> = Vec::new();
     let query = match regiao.is_empty() {
         true => { "
