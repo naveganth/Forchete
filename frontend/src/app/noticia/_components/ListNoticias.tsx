@@ -1,17 +1,8 @@
 'use client'
 
 import { Noticia } from "@/app/page";
-import { useNoticias } from "@/hooks/use-noticias";
-import {
-  Badge,
-  Card,
-  Container,
-  Grid,
-  Image,
-  Stack,
-  Text,
-  Title,
-} from "@mantine/core";
+import { useNoticias } from "@/app/noticia/_hooks/use-noticias";
+import { Badge, Card, Container, Grid, Image, Stack, Text, Title, } from "@mantine/core";
 import { useSearchParams } from "next/navigation";
 
 export const ListNoticias = ({ noticias }: { noticias: Noticia[] }) => {
@@ -37,13 +28,13 @@ export const ListNoticias = ({ noticias }: { noticias: Noticia[] }) => {
                     />
                 </Card.Section>
 
-                <Stack spacing="sm" mt="md">
+                <Stack>
                     <Title order={4}>{noticia.titulo}</Title>
                     <Text size="sm" color="dimmed" lineClamp={3}>
                     Publicado em:{" "}
                     {new Date(noticia.data_post).toLocaleDateString()}
                     </Text>
-                    <Stack spacing="xs" direction="row">
+                    <Stack>
                     {noticia.regioes.map((regiao) => (
                         <Badge key={regiao} color="blue" variant="light">
                         {regiao}
