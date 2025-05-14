@@ -1,11 +1,9 @@
 import '@mantine/core/styles.css';
-// import "./globals.css";
 import { HeaderSearch } from "./(components)/navbar/page";
 import { FooterLinks } from "./(components)/footer/page";
 import { ColorSchemeScript, MantineProvider, mantineHtmlProps, Container } from "@mantine/core";
-import {   QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { QueryProvider } from '@/lib/queryClient';
 
-const queryClient = new QueryClient()
 export default function RootLayout({
   children,
 }: {
@@ -17,7 +15,7 @@ export default function RootLayout({
         <ColorSchemeScript />
       </head>
       <body>
-        <QueryClientProvider client={queryClient}>
+        <QueryProvider>
           <MantineProvider>
             <HeaderSearch/>
             <Container>
@@ -25,7 +23,7 @@ export default function RootLayout({
             </Container>
             <FooterLinks/>
           </MantineProvider>
-        </QueryClientProvider>
+        </QueryProvider>
       </body>
     </html>
   );
