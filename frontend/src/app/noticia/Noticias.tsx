@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  Autocomplete,
   Badge,
   Card,
   Container,
@@ -14,7 +13,7 @@ import {
   Button,
 } from "@mantine/core";
 import { useSearchParams } from "next/navigation";
-import { useNoticias } from "../_hooks/use-noticias";
+import { useNoticias } from "../../hooks/use-noticias";
 
 export const ListNoticias = () => {
   const searchParams = useSearchParams();

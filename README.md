@@ -4,7 +4,7 @@ Agregador de notícias que coleta machentes, notícias e postagens de todos os p
 
 ## Stack utilizada
 
-**Front-end:** Next, Shadcn, React, TypeScript.
+**Front-end:** Next.js, Mantine,  React, TypeScript.
 
 **Back-end:** Python, Mysql.
 
