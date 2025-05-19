@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from '@tanstack/react-query';
-import { Noticia } from '@/app/page';
+import { Noticia } from '@/types/noticia';
 
 type Params = {
     dataInicio?: string;
@@ -10,11 +10,7 @@ type Params = {
     page?: number;
 }
 
-interface ApiResponse {
-    noticias: Noticia[];
-    total: number;
-    totalPages: number;
-}
+type ApiResponse = Noticia[];
 
 export function useNoticias(params?: Params) {
     const {
@@ -36,6 +32,8 @@ export function useNoticias(params?: Params) {
             }
             
             return response.json();
-        }
+        },
+        staleTime: 1000 * 60 * 5,
+        gcTime: 1000 * 60 * 30,
     });
 }

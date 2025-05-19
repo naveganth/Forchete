@@ -14,12 +14,20 @@ import {
   Button,
   Stack,
   Center,
+  Skeleton,
 } from "@mantine/core";
 import { useNoticias } from "../../hooks/use-noticias";
 import { useState } from "react";
+import { NoticiasSkeleton2 } from "../../components/feedback/NoticiasSkeleton2";
+import { NoticiasError } from "../../components/feedback/NoticiasError";
+
+interface ImageLoadingState {
+  [key: number]: boolean;
+}
 
 export default function Section() {
   const [currentPage, setCurrentPage] = useState(1);
+  const [imageLoading, setImageLoading] = useState<ImageLoadingState>({});
   const limit = 5;
 
   const {
@@ -32,31 +40,28 @@ export default function Section() {
     page: currentPage,
   });
 
-  if (isLoading)
-    return (
-      <Center h="100vh">
-        <Text>Carregando...</Text>
-      </Center>
-    );
-  if (isError)
-    return (
-      <Center h="100vh">
-        <Text c="red">Erro ao carregar notícias: {error.message}</Text>
-      </Center>
-    );
-  if (!noticias || noticias.length === 0)
-    return (
-      <Center h="100vh">
-        <Text>Nenhuma notícia encontrada</Text>
-      </Center>
-    );
+  const handleImageLoad = (id: number) => {
+    setImageLoading((prev) => ({ ...prev, [id]: true }));
+  };
+
+  if (isLoading) {
+    return <NoticiasSkeleton2 />;
+  }
+
+  if (isError) {
+    return <NoticiasError error={error} />;
+  }
+
+  if (!noticias?.length) {
+    return <NoticiasError message="Nenhuma notícia encontrada" />;
+  }
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const totalPages = Math.ceil(100 / limit);
+  const totalPages = Math.ceil(200 / limit);
 
   return (
     <Container size="xl" py="xl">
@@ -73,12 +78,17 @@ export default function Section() {
               >
                 <Grid columns={12} gutter="lg">
                   <Grid.Col span={{ base: 12, sm: 4 }}>
+                    {!imageLoading[noticia.id] && <Skeleton height={200} />}
                     <Image
                       src={noticia.imagem}
                       alt={noticia.titulo}
                       height={200}
                       fallbackSrc="https://placehold.co/600x400"
                       fit="cover"
+                      onLoad={() => handleImageLoad(noticia.id)}
+                      style={{
+                        display: imageLoading[noticia.id] ? "block" : "none",
+                      }}
                     />
                   </Grid.Col>
                   <Grid.Col span={{ base: 12, sm: 8 }}>

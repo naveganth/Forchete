@@ -14,6 +14,8 @@ import {
 } from "@mantine/core";
 import { useSearchParams } from "next/navigation";
 import { useNoticias } from "../../hooks/use-noticias";
+import { NoticiasSkeleton } from "../../components/feedback/NoticiasSkeleton";
+import { NoticiasError } from "../../components/feedback/NoticiasError";
 
 export const ListNoticias = () => {
   const searchParams = useSearchParams();
@@ -23,14 +25,15 @@ export const ListNoticias = () => {
     data: noticias,
     isLoading,
     error,
+    isError,
   } = useNoticias({
     page,
     limit: 12,
   });
 
-  if (isLoading) return <div>Carregado...</div>;
-  if (error) return <div>Error: {error.message}</div>;
-  if (!noticias) return <div>Nenhuma notícia encontrada</div>;
+  if (isLoading) return <NoticiasSkeleton />;
+  if (isError) return <NoticiasError error={error} />;
+  if (!noticias?.length) return <NoticiasError message="Nenhuma notícia encontrada" />;
 
   return (
     <Container py="xl">

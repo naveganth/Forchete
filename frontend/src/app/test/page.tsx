@@ -15,21 +15,23 @@ import {
 } from "@mantine/core";
 import { IconArrowRight } from "@tabler/icons-react";
 import { useNoticias } from "../../hooks/use-noticias";
+import { NoticiasError } from "../../components/feedback/NoticiasError";
+import { NoticiasSkeleton2 } from "../../components/feedback/NoticiasSkeleton2";
 
 export default function Page() {
   const {
     data: noticias,
     isLoading,
     error,
+    isError,
   } = useNoticias({
     limit: 5,
     page: 1,
   });
 
-  if (isLoading) return <Box p="md">Carregando...</Box>;
-  if (error) return <Box p="md">Erro ao carregar notícias</Box>;
-  if (!noticias || noticias.length === 0)
-    return <Box p="md">Nenhuma notícia encontrada</Box>;
+  if (isLoading) return <NoticiasSkeleton2 />;
+  if (isError) return <NoticiasError error={error} />;
+  if (!noticias?.length) return <NoticiasError message="Nenhuma notícia encontrada" />;
 
   return (
     <Box pos="relative" h={rem(700)}>
