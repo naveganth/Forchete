@@ -8,3 +8,4 @@ dotenvy = "0.15.7"
 mysql = {version = "26.0.0", features = ["chrono"]}
 chrono = "0.4.40"
 noticia = { path = "../noticia" }
+serde = "1.0.219"
