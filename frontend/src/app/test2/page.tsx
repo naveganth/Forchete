@@ -17,32 +17,74 @@ import {
   Skeleton,
 } from "@mantine/core";
 import { useNoticias } from "../../hooks/use-noticias";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { NoticiasSkeleton2 } from "../../components/feedback/NoticiasSkeleton2";
 import { NoticiasError } from "../../components/feedback/NoticiasError";
+import { TrendingNews } from "../../components/news/TrendingNews";
+import { useQueryClient } from '@tanstack/react-query';
 
 interface ImageLoadingState {
   [key: number]: boolean;
 }
 
+interface LoadedPagesState {
+  [key: number]: boolean;
+}
+
 export default function Section() {
+  const queryClient = useQueryClient();
   const [currentPage, setCurrentPage] = useState(1);
   const [imageLoading, setImageLoading] = useState<ImageLoadingState>({});
-  const limit = 5;
+  const [loadedPages, setLoadedPages] = useState<LoadedPagesState>({});
+  const pageSize = 5;
 
   const {
-    data: noticias,
+    data,
     isLoading,
     error,
     isError,
   } = useNoticias({
-    limit,
+    limit: pageSize,
     page: currentPage,
   });
+
+  // Update loaded pages when data changes
+  useEffect(() => {
+    if (data?.noticias) {
+      setLoadedPages(prev => ({
+        ...prev,
+        [currentPage]: true
+      }));
+    }
+  }, [data?.noticias, currentPage]);
+
+  // Prefetch next and previous pages
+  const prefetchPages = () => {
+    const pagesToPrefetch = [-2, -1, 1, 2].map(offset => currentPage + offset);
+    pagesToPrefetch.forEach(page => {
+      if (page > 0 && page <= totalPages) {
+        queryClient.prefetchQuery({
+          queryKey: ['list-noticias', { page, limit: pageSize, dataInicio: '2020-04-01', dataFim: '2027-05-01' }],
+          queryFn: () => fetch(
+            `https://projeti.gabrielataide.com/pegar_noticias?data_inicio=2020-04-01&data_fim=2027-05-01&quantidade=${pageSize}&page=${page}`
+          ).then(res => res.json())
+        });
+      }
+    });
+  };
+
+  // Prefetch pages when current page changes
+  useEffect(() => {
+    if (data?.total) {
+      prefetchPages();
+    }
+  }, [currentPage, data?.total]);
 
   const handleImageLoad = (id: number) => {
     setImageLoading((prev) => ({ ...prev, [id]: true }));
   };
+
+  const totalPages = data?.total ? Math.floor(data.total / pageSize) : 1;
 
   if (isLoading) {
     return <NoticiasSkeleton2 />;
@@ -52,23 +94,16 @@ export default function Section() {
     return <NoticiasError error={error} />;
   }
 
-  if (!noticias?.length) {
+  if (!data?.noticias?.length) {
     return <NoticiasError message="Nenhuma notícia encontrada" />;
   }
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const totalPages = Math.ceil(200 / limit);
 
   return (
     <Container size="xl" py="xl">
       <Grid columns={12} gutter="lg">
         <Grid.Col span={{ base: 12, md: 8 }}>
           <Stack gap="lg">
-            {noticias.map((noticia) => (
+            {data.noticias.map((noticia) => (
               <Card
                 key={noticia.id}
                 shadow="sm"
@@ -78,18 +113,28 @@ export default function Section() {
               >
                 <Grid columns={12} gutter="lg">
                   <Grid.Col span={{ base: 12, sm: 4 }}>
-                    {!imageLoading[noticia.id] && <Skeleton height={200} />}
-                    <Image
-                      src={noticia.imagem}
-                      alt={noticia.titulo}
-                      height={200}
-                      fallbackSrc="https://placehold.co/600x400"
-                      fit="cover"
-                      onLoad={() => handleImageLoad(noticia.id)}
-                      style={{
-                        display: imageLoading[noticia.id] ? "block" : "none",
-                      }}
-                    />
+                    <Box pos="relative">
+                      {!imageLoading[noticia.id] && !loadedPages[currentPage] && (
+                        <Skeleton 
+                          height={200} 
+                          style={{ position: 'absolute', top: 0, left: 0, right: 0 }}
+                        />
+                      )}
+                      <Image
+                        src={noticia.imagem}
+                        alt={noticia.titulo}
+                        height={200}
+                        fallbackSrc="https://placehold.co/600x400"
+                        fit="cover"
+                        onLoad={() => handleImageLoad(noticia.id)}
+                        style={{
+                          opacity: (imageLoading[noticia.id] || loadedPages[currentPage]) ? 1 : 0,
+                          transition: 'opacity 0.2s ease-in-out',
+                          position: 'relative',
+                          zIndex: 1
+                        }}
+                      />
+                    </Box>
                   </Grid.Col>
                   <Grid.Col span={{ base: 12, sm: 8 }}>
                     <Stack gap="xs">
@@ -122,15 +167,21 @@ export default function Section() {
               </Card>
             ))}
           </Stack>
-          <Group justify="flex-end" mt="xl">
-            <Pagination
-              total={totalPages}
-              value={currentPage}
-              onChange={handlePageChange}
-            />
-          </Group>
+          {totalPages > 1 && (
+            <Group justify="flex-end" mt="xl">
+              <Pagination
+                total={totalPages}
+                value={currentPage}
+                onChange={setCurrentPage}
+                withEdges
+                size="md"
+              />
+            </Group>
+          )}
         </Grid.Col>
-        <Grid.Col span={{ base: 12, md: 4 }}>TRENDING</Grid.Col>
+        <Grid.Col span={{ base: 12, md: 4 }}>
+          <TrendingNews />
+        </Grid.Col>
       </Grid>
     </Container>
   );

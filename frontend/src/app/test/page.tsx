@@ -20,7 +20,7 @@ import { NoticiasSkeleton2 } from "../../components/feedback/NoticiasSkeleton2";
 
 export default function Page() {
   const {
-    data: noticias,
+    data,
     isLoading,
     error,
     isError,
@@ -31,13 +31,13 @@ export default function Page() {
 
   if (isLoading) return <NoticiasSkeleton2 />;
   if (isError) return <NoticiasError error={error} />;
-  if (!noticias?.length) return <NoticiasError message="Nenhuma notícia encontrada" />;
+  if (!data?.noticias?.length) return <NoticiasError message="Nenhuma notícia encontrada" />;
 
   return (
     <Box pos="relative" h={rem(700)}>
       <Image
-        src={noticias[0]?.imagem}
-        alt={noticias[0]?.titulo}
+        src={data.noticias[0]?.imagem}
+        alt={data.noticias[0]?.titulo}
         fit="cover"
         radius={0}
         h="100%"
@@ -53,7 +53,7 @@ export default function Page() {
       <Container size="xl" h="100%" style={{ position: "relative", zIndex: 2 }}>
         <Stack justify="center" h="100%" gap="lg" maw={900}>
           <Group gap="xs">
-            {noticias[0].regioes?.map((regiao: string, index: number) => (
+            {data.noticias[0].regioes?.map((regiao: string, index: number) => (
               <Badge
                 key={index}
                 variant="light"
@@ -70,16 +70,16 @@ export default function Page() {
           </Group>
 
           <Title order={1} c="white" lineClamp={3} fw={700}>
-            {noticias[0].titulo}
+            {data.noticias[0].titulo}
           </Title>
 
           <Text c="gray.2" size="lg">
-            Publicado em: {new Date(noticias[0].data_post).toLocaleDateString()}
+            Publicado em: {new Date(data.noticias[0].data_post).toLocaleDateString()}
           </Text>
 
           <Button
             component="a"
-            href={noticias[0].link}
+            href={data.noticias[0].link}
             target="_blank"
             variant="filled"
             color="white"

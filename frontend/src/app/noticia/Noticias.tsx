@@ -22,7 +22,7 @@ export const ListNoticias = () => {
   const page = Number(searchParams.get("page")) || 1;
 
   const {
-    data: noticias,
+    data,
     isLoading,
     error,
     isError,
@@ -33,7 +33,7 @@ export const ListNoticias = () => {
 
   if (isLoading) return <NoticiasSkeleton />;
   if (isError) return <NoticiasError error={error} />;
-  if (!noticias?.length) return <NoticiasError message="Nenhuma notícia encontrada" />;
+  if (!data?.noticias?.length) return <NoticiasError message="Nenhuma notícia encontrada" />;
 
   return (
     <Container py="xl">
@@ -41,7 +41,7 @@ export const ListNoticias = () => {
         Últimas Notícias
       </Title>
       <Grid>
-        {noticias.map((noticia) => (
+        {data.noticias.map((noticia) => (
           <Grid.Col key={noticia.id} span={{ base: 12, sm: 6, md: 4 }}>
             <Card
               h={480}
