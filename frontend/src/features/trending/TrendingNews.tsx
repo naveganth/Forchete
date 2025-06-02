@@ -5,8 +5,8 @@ import { useDisclosure } from "@mantine/hooks";
 import { Card, Stack, Title, Text, Button, Group, Badge, Image, Skeleton } from "@mantine/core";
 import Cookies from "js-cookie";
 import { useNoticias } from "../../hooks/use-noticias";
-import { BairroModal } from "../modals/BairroModal";
-import { NoticiasError } from "../feedback/NoticiasError";
+import { BairroModal } from "@/features/trending/modals/BairroModal";
+import { NoticiasError } from "../../features/noticias/feedback/NoticiasError";
 
 const COOKIE_NAME = "user-bairros";
 
@@ -63,7 +63,7 @@ export function TrendingNews() {
 
   const filteredNoticias = data?.noticias?.filter((noticia) =>
     noticia.regioes.some(regiao => bairros.includes(regiao))
-  ).slice(0, 5); // Show only 5 news items
+  ).slice(0, 5);
 
   if (isLoading) {
     return (

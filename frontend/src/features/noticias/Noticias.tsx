@@ -13,9 +13,9 @@ import {
   Button,
 } from "@mantine/core";
 import { useSearchParams } from "next/navigation";
-import { useNoticias } from "../../hooks/use-noticias";
-import { NoticiasSkeleton } from "../../components/feedback/NoticiasSkeleton";
-import { NoticiasError } from "../../components/feedback/NoticiasError";
+import { useNoticias } from "../../hooks/use-noticias"; 
+import { NoticiasSkeleton } from "./feedback/NoticiasSkeleton";
+import { NoticiasError } from "./feedback/NoticiasError";
 
 export const ListNoticias = () => {
   const searchParams = useSearchParams();

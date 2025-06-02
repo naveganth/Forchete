@@ -14,9 +14,9 @@ import {
   rem,
 } from "@mantine/core";
 import { IconArrowRight } from "@tabler/icons-react";
-import { useNoticias } from "../../hooks/use-noticias";
-import { NoticiasError } from "../../components/feedback/NoticiasError";
-import { NoticiasSkeleton2 } from "../../components/feedback/NoticiasSkeleton2";
+import { useNoticias } from "../../../hooks/use-noticias";
+import { NoticiasError } from "../../../features/noticias/feedback/NoticiasError";
+import { NoticiasSkeleton2 } from "../../../features/noticias/feedback/NoticiasSkeleton2";
 
 export default function Page() {
   const {

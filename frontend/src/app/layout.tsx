@@ -1,6 +1,6 @@
 import '@mantine/core/styles.css';
-import { HeaderSearch } from "../components/navbar/page";
-import { FooterLinks } from "../components/footer/page";
+import { HeaderSearch } from "../components/layout/navbar/page";
+import { FooterLinks } from "../components/layout/footer/page";
 import { ColorSchemeScript, MantineProvider, mantineHtmlProps, Container } from "@mantine/core";
 import { QueryProvider } from '@/lib/queryClient';
 

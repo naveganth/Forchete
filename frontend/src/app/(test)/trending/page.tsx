@@ -16,11 +16,12 @@ import {
   Center,
   Skeleton,
 } from "@mantine/core";
-import { useNoticias } from "../../hooks/use-noticias";
+import { useNoticias } from "../../../hooks/use-noticias";
 import { useState, useEffect } from "react";
-import { NoticiasSkeleton2 } from "../../components/feedback/NoticiasSkeleton2";
-import { NoticiasError } from "../../components/feedback/NoticiasError";
-import { TrendingNews } from "../../components/news/TrendingNews";
+import { NoticiasSkeleton2 } from "../../../features/noticias/feedback/NoticiasSkeleton2";
+import { NoticiasError } from "../../../features/noticias/feedback/NoticiasError";
+import { TrendingNews } from "../../../features/trending/TrendingNews";
+
 import { useQueryClient } from '@tanstack/react-query';
 
 interface ImageLoadingState {
@@ -48,7 +49,6 @@ export default function Section() {
     page: currentPage,
   });
 
-  // Update loaded pages when data changes
   useEffect(() => {
     if (data?.noticias) {
       setLoadedPages(prev => ({
@@ -58,7 +58,6 @@ export default function Section() {
     }
   }, [data?.noticias, currentPage]);
 
-  // Prefetch next and previous pages
   const prefetchPages = () => {
     const pagesToPrefetch = [-2, -1, 1, 2].map(offset => currentPage + offset);
     pagesToPrefetch.forEach(page => {
@@ -73,7 +72,6 @@ export default function Section() {
     });
   };
 
-  // Prefetch pages when current page changes
   useEffect(() => {
     if (data?.total) {
       prefetchPages();

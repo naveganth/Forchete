@@ -1,6 +1,6 @@
 'use client';
 
-import { ListNoticias } from "@/app/noticia/Noticias"
+import { ListNoticias } from "@/features/noticias/Noticias"
 
 export interface Noticia {
   id: string
