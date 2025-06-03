@@ -25,7 +25,7 @@ export function Search() {
     <Autocomplete
       width={800}
       className={classes.search}
-      placeholder="Search news..."
+      placeholder="Procurar por bairros"
       value={searchTerm}
       onChange={setSearchTerm}
       leftSection={<IconSearch size={16} stroke={1.5} />}
