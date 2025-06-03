@@ -1,53 +1,101 @@
-import { Autocomplete, Image, Text, Box } from '@mantine/core';
-import { IconSearch } from '@tabler/icons-react';
+import { Autocomplete, Image, Text, Box, Skeleton, Loader, Group } from '@mantine/core';
+import { IconSearch, IconAlertCircle } from '@tabler/icons-react';
 import { useSearchNoticias } from '@/hooks/use-search-noticias';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import classes from './HeaderSearch.module.css';
 import { Noticia } from '@/types/noticia';
+import { useDebouncedValue } from '@mantine/hooks';
+import { useRouter } from 'next/navigation';
 
 interface SearchItem {
   value: string;
   image: string;
   label: string;
+  link: string;
 }
 
 export function Search() {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
-  const { data: searchResults, isLoading } = useSearchNoticias(searchTerm);
+  const [debouncedValue] = useDebouncedValue(searchTerm, 300);
+  const { data: searchResults, isLoading, error } = useSearchNoticias(debouncedValue);
 
-  const searchItems: SearchItem[] = searchResults?.map((noticia: Noticia) => ({
-    value: noticia.titulo,
+  const uniqueNews = new Map<number, Noticia>();
+  searchResults?.forEach((noticia: Noticia) => {
+    if (!uniqueNews.has(noticia.id)) {
+      uniqueNews.set(noticia.id, noticia);
+    }
+  });
+
+  const searchItems: SearchItem[] = Array.from(uniqueNews.values()).map((noticia: Noticia) => ({
+    value: `${noticia.id}-${noticia.titulo}`,
     image: noticia.imagem || '/placeholder-image.jpg',
     label: noticia.titulo,
-  })) || [];
+    link: noticia.link,
+  }));
+
+  const handleSearch = useCallback((value: string) => {
+    if (value) {
+      if (value.includes('-')) {
+        const searchTerm = value.split('-').slice(1).join('-');
+        router.push(`/search/${encodeURIComponent(searchTerm)}`);
+      } else {
+        router.push(`/search/${encodeURIComponent(value)}`);
+      }
+    }
+  }, [router]);
+
+  const renderOption = useCallback(({ option }: { option: any }) => {
+    const item = option as SearchItem;
+    return (
+      <Box className={classes.searchOption}>
+        <Group wrap="nowrap" align="center">
+          <Image
+            src={item.image}
+            alt={item.label}
+            w={180}
+            h={120}
+            fit="cover"
+            radius="sm"
+            fallbackSrc="/placeholder-image.jpg"
+            loading="lazy"
+          />
+          <Text size="sm" lineClamp={2} className={classes.searchOptionText}>
+            {item.label}
+          </Text>
+        </Group>
+      </Box>
+    );
+  }, []);
+
+  const nothingFound = (
+    <Box className={classes.nothingFound}>
+      <IconAlertCircle size={20} />
+      <Text size="sm">Nenhuma notícia encontrada</Text>
+    </Box>
+  );
 
   return (
     <Autocomplete
-      width={800}
       className={classes.search}
-      placeholder="Procurar por bairros"
-      value={searchTerm}
-      onChange={setSearchTerm}
+      placeholder="Buscar notícias..."
       leftSection={<IconSearch size={16} stroke={1.5} />}
       data={searchItems}
-      visibleFrom="xs"
-      comboboxProps={{ withinPortal: true }}
-      renderOption={(option) => {
-        const item = option as unknown as SearchItem;
-        return (
-          <Box style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Image
-              src={item.image}
-              alt={item.label}
-              width={40}
-              height={40}
-              fit="cover"
-              radius="sm"
-            />
-            <Text size="sm">{item.label}</Text>
-          </Box>
-        );
+      value={searchTerm}
+      onChange={setSearchTerm}
+      onOptionSubmit={handleSearch}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' && searchTerm) {
+          event.preventDefault();
+          handleSearch(searchTerm);
+        }
       }}
+      renderOption={renderOption}
+      maxDropdownHeight={400}
+      comboboxProps={{ shadow: 'md' }}
+      size="md"
+      radius="xl"
+      limit={5}
     />
   );
 }

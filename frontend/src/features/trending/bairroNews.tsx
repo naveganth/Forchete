@@ -7,7 +7,7 @@ import { IconSettings } from "@tabler/icons-react";
 import Cookies from "js-cookie";
 import { useNoticias } from "../../hooks/use-noticias";
 import { BairroModal } from "@/features/trending/modals/BairroModal";
-import { NoticiasError } from "../../features/noticias/feedback/NoticiasError";
+import { NoticiasError } from "../noticias/feedback/NoticiasError";
 
 const COOKIE_NAME = "user-bairros";
 
@@ -15,7 +15,7 @@ interface ImageLoadingState {
   [key: number]: boolean;
 }
 
-export function TrendingNews() {
+export function BairroNews() {
   const [opened, { open, close }] = useDisclosure(false);
   const [bairros, setBairros] = useState<string[]>(() => {
     const savedBairros = Cookies.get(COOKIE_NAME);
