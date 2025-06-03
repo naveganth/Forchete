@@ -18,7 +18,7 @@ import { useSearchNoticias } from "../../hooks/use-search-noticias";
 import { useState } from "react";
 import { NoticiasSkeleton2 } from "../noticias/feedback/NoticiasSkeleton2";
 import { NoticiasError } from "../noticias/feedback/NoticiasError";
-import { useParams } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 
 interface ImageLoadingState {
   [key: number]: boolean;
@@ -26,18 +26,25 @@ interface ImageLoadingState {
 
 export function LastNews() {
   const params = useParams();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const searchQuery = params?.query as string || '';
+  const page = Number(searchParams.get('page')) || 1;
   const [imageLoading, setImageLoading] = useState<ImageLoadingState>({});
 
   const {
-    data: searchResults,
+    data,
     isLoading,
     error,
     isError,
-  } = useSearchNoticias(searchQuery);
+  } = useSearchNoticias(searchQuery, page, 10);
 
   const handleImageLoad = (id: number) => {
     setImageLoading((prev) => ({ ...prev, [id]: true }));
+  };
+
+  const handlePageChange = (newPage: number) => {
+    router.push(`/search/${searchQuery}?page=${newPage}`);
   };
 
   if (!searchQuery) {
@@ -52,9 +59,11 @@ export function LastNews() {
     return <NoticiasError error={error} />;
   }
 
-  if (!searchResults?.length) {
+  if (!data?.noticias?.length) {
     return <NoticiasError message={`Nenhuma notícia encontrada para "${searchQuery}"`} />;
   }
+
+  const totalPages = Math.ceil(data.total / 10);
 
   return (
     <>
@@ -64,8 +73,9 @@ export function LastNews() {
           : "Últimas notícias"
         }
       </Title>
-      <Stack gap="lg">
-        {searchResults.map((noticia) => (
+      
+      <Stack gap="md">
+        {data.noticias.map((noticia) => (
           <Card
             key={noticia.id}
             shadow="sm"
@@ -129,6 +139,17 @@ export function LastNews() {
           </Card>
         ))}
       </Stack>
+
+      {totalPages > 1 && (
+        <Group justify="center" mt="xl">
+          <Pagination
+            total={totalPages}
+            value={page}
+            onChange={handlePageChange}
+            withEdges
+          />
+        </Group>
+      )}
     </>
   );
 } 

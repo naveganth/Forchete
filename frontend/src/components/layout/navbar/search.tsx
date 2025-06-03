@@ -18,10 +18,10 @@ export function Search() {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedValue] = useDebouncedValue(searchTerm, 300);
-  const { data: searchResults, isLoading, error } = useSearchNoticias(debouncedValue);
+  const { data, isLoading, error } = useSearchNoticias(debouncedValue);
 
   const uniqueNews = new Map<number, Noticia>();
-  searchResults?.forEach((noticia: Noticia) => {
+  data?.noticias?.forEach((noticia: Noticia) => {
     if (!uniqueNews.has(noticia.id)) {
       uniqueNews.set(noticia.id, noticia);
     }
@@ -67,13 +67,6 @@ export function Search() {
       </Box>
     );
   }, []);
-
-  const nothingFound = (
-    <Box className={classes.nothingFound}>
-      <IconAlertCircle size={20} />
-      <Text size="sm">Nenhuma notícia encontrada</Text>
-    </Box>
-  );
 
   return (
     <Autocomplete
