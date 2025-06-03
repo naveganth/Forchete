@@ -1,3 +1,4 @@
+// TODO: add graphs to see bairros by number
 "use client";
 
 import { useQuery } from '@tanstack/react-query';
@@ -8,6 +9,7 @@ type Params = {
     dataFim?: string;
     limit?: number;
     page?: number;
+    regioes?: string[];
 }
 
 type ApiResponse = {
@@ -20,13 +22,15 @@ export function useNoticias(params?: Params) {
         dataInicio = '2020-04-01',
         dataFim = '2027-05-01',
         limit = 10,
-        page = 1
+        page = 1,
+        regioes = []
     } = params || {};
 
     return useQuery<ApiResponse>({
-        queryKey: ['list-noticias', { page, limit, dataInicio, dataFim }],
+        queryKey: ['list-noticias', { page, limit, dataInicio, dataFim, regioes }],
         queryFn: async () => {
-            const url = `https://projeti.gabrielataide.com/pegar_noticias?data_inicio=${dataInicio}&data_fim=${dataFim}&quantidade=${limit}&page=${page}`;
+            const regioesParam = regioes.length > 0 ? `&regioes=${regioes.join(',')}` : '';
+            const url = `https://projeti.gabrielataide.com/pegar_noticias?data_inicio=${dataInicio}&data_fim=${dataFim}&quantidade=${limit}&page=${page}${regioesParam}`;
             console.log('Fetching from URL:', url);
             
             const response = await fetch(url);
@@ -50,6 +54,7 @@ export function useNoticias(params?: Params) {
                     limit, 
                     dataInicio, 
                     dataFim,
+                    regioes,
                     total: data.total,
                     calculatedTotalPages: Math.ceil(data.total / limit)
                 });
