@@ -29,6 +29,7 @@ export function LastNews() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const searchQuery = params?.query as string || '';
+  const originalQuery = searchParams.get('original') || searchQuery;
   const page = Number(searchParams.get('page')) || 1;
   const [imageLoading, setImageLoading] = useState<ImageLoadingState>({});
 
@@ -44,7 +45,7 @@ export function LastNews() {
   };
 
   const handlePageChange = (newPage: number) => {
-    router.push(`/search/${searchQuery}?page=${newPage}`);
+    router.push(`/search/${searchQuery}?=${encodeURIComponent(originalQuery)}&page=${newPage}`);
   };
 
   if (!searchQuery) {
@@ -52,7 +53,7 @@ export function LastNews() {
   }
 
   if (isLoading) {
-    return <NoticiasSkeleton2 />;
+    return <NoticiasSkeleton2 count={10} />;
   }
 
   if (isError) {
@@ -60,7 +61,7 @@ export function LastNews() {
   }
 
   if (!data?.noticias?.length) {
-    return <NoticiasError message={`Nenhuma notícia encontrada para "${searchQuery}"`} />;
+    return <NoticiasError message={`Nenhuma notícia encontrada para "${originalQuery}"`} />;
   }
 
   const totalPages = Math.ceil(data.total / 10);
@@ -69,7 +70,7 @@ export function LastNews() {
     <>
       <Title order={2} mb="md">
         {searchQuery 
-          ? `Resultados da busca: "${searchQuery}"`
+          ? `Resultados da busca: "${originalQuery}"`
           : "Últimas notícias"
         }
       </Title>

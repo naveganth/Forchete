@@ -7,13 +7,17 @@ import {
   Skeleton,
 } from "@mantine/core";
 
-export const NoticiasSkeleton2 = () => {
+interface NoticiasSkeleton2Props {
+  count?: number;
+}
+
+export const NoticiasSkeleton2 = ({ count = 5 }: NoticiasSkeleton2Props) => {
   return (
     <Container size="xl" py="xl">
       <Grid columns={12} gutter="lg">
         <Grid.Col span={{ base: 12, md: 8 }}>
           <Stack gap="lg">
-            {Array(5).fill(0).map((_, index) => (
+            {Array(count).fill(0).map((_, index) => (
               <Card
                 key={index}
                 shadow="sm"

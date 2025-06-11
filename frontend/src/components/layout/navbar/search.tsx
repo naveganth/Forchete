@@ -13,7 +13,7 @@ export function Search() {
       const normalizedValue = value
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "");
-      router.push(`/search/${encodeURIComponent(normalizedValue)}`);
+      router.push(`/search/${encodeURIComponent(normalizedValue)}?original=${encodeURIComponent(value)}`);
     }
   };
 
