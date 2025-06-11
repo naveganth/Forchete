@@ -2,7 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
-import { Modal, MultiSelect, Button, Stack, Title, Text, Group, Badge } from "@mantine/core";
+import {
+  Popover,
+  Modal,
+  MultiSelect,
+  Button,
+  Stack,
+  Title,
+  Text,
+  Group,
+  Badge,
+} from "@mantine/core";
 import Cookies from "js-cookie";
 
 const BAIRROS = [
@@ -73,11 +83,11 @@ const BAIRROS = [
   "Mucajá",
   "São José",
   "Miracema",
-].sort((a, b) => a.localeCompare(b, 'pt-BR')); // Sort alphabetically in Portuguese
+].sort((a, b) => a.localeCompare(b, "pt-BR"));
 
 const COOKIE_NAME = "user-bairros";
 const COOKIE_OPTIONS = {
-  expires: 365, // 1 year
+  expires: 365,
   path: "/",
   sameSite: "strict" as const,
 };
@@ -85,10 +95,16 @@ const COOKIE_OPTIONS = {
 interface BairroModalProps {
   opened?: boolean;
   onClose?: () => void;
+  isFirstTime?: boolean;
 }
 
-export function BairroModal({ opened: externalOpened, onClose: externalOnClose }: BairroModalProps) {
-  const [internalOpened, { open: internalOpen, close: internalClose }] = useDisclosure(false);
+export function BairroModal({
+  opened: externalOpened,
+  onClose: externalOnClose,
+  isFirstTime = false,
+}: BairroModalProps) {
+  const [internalOpened, { open: internalOpen, close: internalClose }] =
+    useDisclosure(false);
   const [bairros, setBairros] = useState<string[]>(() => {
     const savedBairros = Cookies.get(COOKIE_NAME);
     return savedBairros ? JSON.parse(savedBairros) : [];
@@ -99,14 +115,12 @@ export function BairroModal({ opened: externalOpened, onClose: externalOnClose }
   const close = isControlled ? externalOnClose || (() => {}) : internalClose;
 
   useEffect(() => {
-    // Only auto-open if not controlled externally
-    if (!isControlled && bairros.length === 0) {
+    if (!isControlled && bairros.length === 0 && isFirstTime) {
       internalOpen();
     }
-  }, [bairros, internalOpen, isControlled]);
+  }, [bairros, internalOpen, isControlled, isFirstTime]);
 
   const handleBairrosChange = (value: string[]) => {
-    // Limit to 5 selections
     const limitedValue = value.slice(0, 5);
     setBairros(limitedValue);
     if (limitedValue.length > 0) {
@@ -122,54 +136,88 @@ export function BairroModal({ opened: externalOpened, onClose: externalOnClose }
     }
   };
 
+  const content = (
+    <Stack w={400}>
+      <Text size="sm" c="dimmed">
+        Para personalizar as notícias de acordo com suas regiões, por favor
+        selecione os bairros de seu interesse. Você pode selecionar mais de um
+        bairro.
+      </Text>
+      <MultiSelect
+        label="Bairros"
+        placeholder="Selecione seus bairros"
+        data={BAIRROS}
+        value={bairros}
+        onChange={handleBairrosChange}
+        searchable
+        comboboxProps={{ withinPortal: true }}
+        maxDropdownHeight={400}
+        clearable
+        description="Selecione até 5 bairros"
+      />
+      {bairros.length > 0 && (
+        <Group gap="xs" mt="xs">
+          <Text size="sm" fw={500}>
+            Bairros selecionados:
+          </Text>
+          {bairros.map((bairro) => (
+            <Badge key={bairro} variant="light" color="blue">
+              {bairro}
+            </Badge>
+          ))}
+        </Group>
+      )}
+      <Button
+        onClick={handleSave}
+        disabled={bairros.length === 0}
+        fullWidth
+        mt="md"
+      >
+        Salvar
+      </Button>
+    </Stack>
+  );
+
+  if (isFirstTime) {
+    return (
+      <Popover
+        opened={opened}
+        onClose={close}
+        position="top"
+        withArrow
+        trapFocus
+        closeOnClickOutside={false}
+        closeOnEscape={false}
+        width={400}
+        styles={{
+          dropdown: {
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: 1000,
+          },
+        }}
+      >
+        <Popover.Target>
+          <div style={{ display: "none" }} />
+        </Popover.Target>
+        <Popover.Dropdown>{content}</Popover.Dropdown>
+      </Popover>
+    );
+  }
+
   return (
     <Modal
       opened={opened}
       onClose={close}
       title="Selecione seus bairros"
       centered
-      closeOnClickOutside={false}
-      closeOnEscape={false}
-      withCloseButton={false}
-      size="lg"
+      size="md"
+      closeOnClickOutside
+      closeOnEscape
     >
-      <Stack>
-        <Text size="sm" c="dimmed">
-          Para personalizar as notícias de acordo com suas regiões, por favor selecione os bairros de seu interesse.
-          Você pode selecionar mais de um bairro.
-        </Text>
-        <MultiSelect
-          label="Bairros"
-          placeholder="Selecione seus bairros"
-          data={BAIRROS}
-          value={bairros}
-          onChange={handleBairrosChange}
-          searchable
-          data-autofocus
-          comboboxProps={{ withinPortal: true }}
-          maxDropdownHeight={400}
-          clearable
-          description="Selecione até 5 bairros"
-        />
-        {bairros.length > 0 && (
-          <Group gap="xs" mt="xs">
-            <Text size="sm" fw={500}>Bairros selecionados:</Text>
-            {bairros.map((bairro) => (
-              <Badge key={bairro} variant="light" color="blue">
-                {bairro}
-              </Badge>
-            ))}
-          </Group>
-        )}
-        <Button
-          onClick={handleSave}
-          disabled={bairros.length === 0}
-          fullWidth
-          mt="md"
-        >
-          Salvar
-        </Button>
-      </Stack>
+      {content}
     </Modal>
   );
-} 
+}

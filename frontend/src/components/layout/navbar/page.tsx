@@ -1,9 +1,12 @@
 'use client';
 
-import { Burger, Group, Image } from "@mantine/core";
+import { Burger, Group, Image, ActionIcon, Drawer, ScrollArea, Stack, Box } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { IconSettings } from "@tabler/icons-react";
 import { Search } from "./search";
 import classes from "./HeaderSearch.module.css";
+import { BairroModal } from "@/features/trending/BairroModal";
+import { rem } from '@mantine/core';
 
 const links = [
   { link: "/noticia", label: "Noticias" },
@@ -13,6 +16,7 @@ const links = [
 
 export function HeaderSearch() {
   const [opened, { toggle, close }] = useDisclosure(false);
+  const [bairroOpened, { open: openBairro, close: closeBairro }] = useDisclosure(false);
 
   const items = links.map((link) => (
     <a
@@ -28,20 +32,71 @@ export function HeaderSearch() {
     </a>
   ));
 
+  const handleBairroClick = (event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    openBairro();
+  };
+
   return (
     <header className={classes.header}>
       <div className={classes.inner}>
         <Group>
           <Image src="/next.svg" alt="Logo" w={"auto"} h={28} />
         </Group>
-        <Search/>
+        <Box visibleFrom="sm">
+          <Search/>
+        </Box>
         <Group>
           <Burger opened={opened} onClick={toggle} size="sm" hiddenFrom="sm" />
           <Group ml={50} gap={5} className={classes.links} visibleFrom="sm">
             {items}
           </Group>
+          <Box visibleFrom="sm">
+            <ActionIcon 
+              variant="light" 
+              size="lg" 
+              onClick={handleBairroClick}
+              title="Selecionar bairros"
+            >
+              <IconSettings size={20} />
+            </ActionIcon>
+          </Box>
         </Group>
       </div>
+
+      <Drawer
+        opened={opened}
+        onClose={close}
+        size="xs"
+        title="Navegação"
+        padding="xl"
+        position="right"
+      >
+        <ScrollArea h={`calc(100vh - ${rem(60)})`} mx="-md">
+          <Stack gap="md">
+            {items}
+            <Box hiddenFrom="sm">
+              <Search/>
+            </Box>
+            <Box hiddenFrom="sm">
+              <ActionIcon 
+                variant="light" 
+                size="lg" 
+                onClick={() => {close(); openBairro();}}
+                title="Selecionar bairros"
+              >
+                <IconSettings size={20} />
+              </ActionIcon>
+            </Box>
+          </Stack>
+        </ScrollArea>
+      </Drawer>
+
+      <BairroModal 
+        opened={bairroOpened} 
+        onClose={closeBairro}
+      />
     </header>
   );
 }
