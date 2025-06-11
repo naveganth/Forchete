@@ -23,8 +23,7 @@ export function HeaderSearch() {
       key={link.label}
       href={link.link}
       className={classes.link}
-      onClick={(event) => {
-        event.preventDefault();
+      onClick={() => {
         close();
       }}
     >
@@ -42,7 +41,9 @@ export function HeaderSearch() {
     <header className={classes.header}>
       <div className={classes.inner}>
         <Group>
-          <Image src="/next.svg" alt="Logo" w={"auto"} h={28} />
+          <a href="/">
+            <Image src="/next.svg" alt="Logo" w={"auto"} h={28} />
+          </a>
         </Group>
         <Box visibleFrom="sm">
           <Search/>
