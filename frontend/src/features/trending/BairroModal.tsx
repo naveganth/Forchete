@@ -132,8 +132,11 @@ export function BairroModal({
 
   const handleSave = () => {
     if (bairros.length > 0) {
-      close();
+      Cookies.set(COOKIE_NAME, JSON.stringify(bairros), COOKIE_OPTIONS);
+    } else {
+      Cookies.remove(COOKIE_NAME, { path: "/" });
     }
+    close();
   };
 
   const content = (
@@ -169,7 +172,6 @@ export function BairroModal({
       )}
       <Button
         onClick={handleSave}
-        disabled={bairros.length === 0}
         fullWidth
         mt="md"
       >
