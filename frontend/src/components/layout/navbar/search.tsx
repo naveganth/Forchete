@@ -1,4 +1,4 @@
-import { TextInput, Image, Text, Box, Skeleton, Loader, Group } from '@mantine/core';
+import { TextInput } from '@mantine/core';
 import { IconSearch } from '@tabler/icons-react';
 import { useState } from 'react';
 import classes from './HeaderSearch.module.css';
@@ -10,10 +10,7 @@ export function Search() {
 
   const handleSearch = (value: string) => {
     if (value) {
-      const normalizedValue = value
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "");
-      router.push(`/search/${encodeURIComponent(normalizedValue)}?original=${encodeURIComponent(value)}`);
+      router.push(`/search?q=${encodeURIComponent(value)}`);
     }
   };
 

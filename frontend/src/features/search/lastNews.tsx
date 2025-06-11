@@ -18,18 +18,16 @@ import { useSearchNoticias } from "../../hooks/use-search-noticias";
 import { useState } from "react";
 import { NoticiasSkeleton2 } from "../noticias/feedback/NoticiasSkeleton2";
 import { NoticiasError } from "../noticias/feedback/NoticiasError";
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 interface ImageLoadingState {
   [key: number]: boolean;
 }
 
 export function LastNews() {
-  const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const searchQuery = params?.query as string || '';
-  const originalQuery = searchParams.get('original') || searchQuery;
+  const searchQuery = searchParams.get('q') || '';
   const page = Number(searchParams.get('page')) || 1;
   const [imageLoading, setImageLoading] = useState<ImageLoadingState>({});
 
@@ -45,7 +43,7 @@ export function LastNews() {
   };
 
   const handlePageChange = (newPage: number) => {
-    router.push(`/search/${searchQuery}?=${encodeURIComponent(originalQuery)}&page=${newPage}`);
+    router.push(`/search?q=${encodeURIComponent(searchQuery)}&page=${newPage}`);
   };
 
   if (!searchQuery) {
@@ -61,7 +59,7 @@ export function LastNews() {
   }
 
   if (!data?.noticias?.length) {
-    return <NoticiasError message={`Nenhuma notícia encontrada para "${originalQuery}"`} />;
+    return <NoticiasError message={`Nenhuma notícia encontrada para "${searchQuery}"`} />;
   }
 
   const totalPages = Math.ceil(data.total / 10);
@@ -70,7 +68,7 @@ export function LastNews() {
     <>
       <Title order={2} mb="md">
         {searchQuery 
-          ? `Resultados da busca: "${originalQuery}"`
+          ? `Resultados da busca: "${searchQuery}"`
           : "Últimas notícias"
         }
       </Title>

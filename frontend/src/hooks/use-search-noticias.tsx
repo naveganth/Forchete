@@ -16,7 +16,6 @@ export function useSearchNoticias(searchTerm: string, page: number = 1, limit: n
 
       const dataInicio = "2010-01-01";
       const dataFim = "2027-12-31";
-      const offset = (page - 1) * limit;
 
       const url = `https://projeti.gabrielataide.com/pegar_noticias?data_inicio=${dataInicio}&data_fim=${dataFim}&quantidade=100&offset=0`;
       
@@ -27,8 +26,7 @@ export function useSearchNoticias(searchTerm: string, page: number = 1, limit: n
  
       const data: ApiResponse = await response.json();
 
-      const decodedSearchTerm = decodeURIComponent(searchTerm);
-      const normalizedSearchTerm = decodedSearchTerm
+      const normalizedSearchTerm = searchTerm
         .toLowerCase()
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "");

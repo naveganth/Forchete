@@ -1,14 +1,24 @@
 'use client';
 
-import { Alert } from '@mantine/core';
-import { IconInfoCircle } from '@tabler/icons-react';
+import { Container, Grid } from "@mantine/core";
+import Hero from "../features/hero/page";
+import { LatestNews } from "../features/search/LatestNews";
+import { BairroNews } from "../features/trending/bairroNews";
 
-export default function Demo() {
-  const icon = <IconInfoCircle />;
+export default function HomePage() {
   return (
-    <Alert variant='light' color='dark' title='Alerta naqueles pique' icon={icon}>
-      <h1> SEU MONGOL </h1>
-      <a href='/noticia'>Vá para a página de notícias.</a>
-    </Alert >
+    <>
+      <Hero />
+      <Container size="xl" py="xl">
+        <Grid columns={12} gutter="lg">
+          <Grid.Col span={{ base: 12, md: 7 }}>
+            <LatestNews />
+          </Grid.Col>
+          <Grid.Col span={{ base: 12, md: 4 }}>
+            <BairroNews />
+          </Grid.Col>
+        </Grid>
+      </Container>
+    </>
   );
 }
