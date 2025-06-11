@@ -34,7 +34,7 @@ export default function Hero() {
   if (!data?.noticias?.length) return <NoticiasError message="Nenhuma notícia encontrada" />;
 
   return (
-    <Box pos="relative" h={rem(700)}>
+    <Box pos="relative" h={rem(500)}>
       <Image
         src={data.noticias[0]?.imagem}
         alt={data.noticias[0]?.titulo}
