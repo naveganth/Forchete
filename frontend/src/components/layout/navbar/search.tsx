@@ -10,7 +10,10 @@ export function Search() {
 
   const handleSearch = (value: string) => {
     if (value) {
-      router.push(`/search/${encodeURIComponent(value)}`);
+      const normalizedValue = value
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+      router.push(`/search/${encodeURIComponent(normalizedValue)}`);
     }
   };
 

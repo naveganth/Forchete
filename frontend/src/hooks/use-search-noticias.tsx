@@ -27,7 +27,8 @@ export function useSearchNoticias(searchTerm: string, page: number = 1, limit: n
  
       const data: ApiResponse = await response.json();
 
-      const normalizedSearchTerm = searchTerm
+      const decodedSearchTerm = decodeURIComponent(searchTerm);
+      const normalizedSearchTerm = decodedSearchTerm
         .toLowerCase()
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "");
