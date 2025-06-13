@@ -31,7 +31,7 @@ function NewsCard({ newsItem, isMain, index }: NewsCardProps) {
   const isMobile = useMediaQuery("(max-width: 768px)");
 
   return (
-    <Link 
+    <Link
       href={newsItem.link}
       target="_blank"
       rel="noopener noreferrer"
@@ -61,8 +61,8 @@ function NewsCard({ newsItem, isMain, index }: NewsCardProps) {
             position: "absolute",
             inset: 0,
             zIndex: 0,
-            transform: hovered && !isMobile ? 'scale(1.1)' : 'scale(1)',
-            transition: 'transform 0.4s ease',
+            transform: hovered && !isMobile ? "scale(1.1)" : "scale(1)",
+            transition: "transform 0.4s ease",
           }}
         />
 
@@ -72,7 +72,13 @@ function NewsCard({ newsItem, isMain, index }: NewsCardProps) {
           zIndex={1}
         />
 
-        <Stack justify="flex-end" h="100%" gap="lg" p="xl" style={{ position: "relative", zIndex: 2 }}>
+        <Stack
+          justify="flex-end"
+          h="100%"
+          gap="lg"
+          p="xl"
+          style={{ position: "relative", zIndex: 2 }}
+        >
           <Group gap="xs">
             {newsItem.regioes?.map((regiao: string, badgeIndex: number) => (
               <Badge
@@ -90,13 +96,19 @@ function NewsCard({ newsItem, isMain, index }: NewsCardProps) {
             ))}
           </Group>
 
-          <Title order={isMain ? 1 : 3} c="white" lineClamp={isMain ? 3 : 2} fw={700}>
+          <Title
+            order={isMain ? 1 : 3}
+            c="white"
+            lineClamp={isMain ? 3 : 2}
+            fw={700}
+          >
             {newsItem.titulo}
           </Title>
 
           {isMain && (
             <Text c="gray.2" size="lg">
-              Publicado em: {new Date(newsItem.data_post).toLocaleDateString()}
+              Publicado em:{" "}
+              {new Date(newsItem.data_post).toLocaleDateString()}
             </Text>
           )}
         </Stack>
@@ -106,39 +118,43 @@ function NewsCard({ newsItem, isMain, index }: NewsCardProps) {
 }
 
 export default function Hero() {
-  const {
-    data,
-    isLoading,
-    error,
-    isError,
-  } = useNoticias({
+  const { data, isLoading, error, isError } = useNoticias({
     limit: 3,
     page: 1,
   });
 
   if (isLoading) return <NoticiasSkeleton2 />;
   if (isError) return <NoticiasError error={error} />;
-  if (!data?.noticias?.length) return <NoticiasError message="Nenhuma notícia encontrada" />;
+  if (!data?.noticias?.length)
+    return <NoticiasError message="Nenhuma notícia encontrada" />;
 
   const mainNews = data.noticias[0];
   const sideNews = data.noticias.slice(1);
 
   return (
-    <Container size="xl" my="xl">
-      <Grid gutter="md">
-        <Grid.Col span={{ base: 12, lg: 8 }} h={{ base: rem(400), lg: rem(700) }}>
-          <NewsCard newsItem={mainNews} isMain={true} index={0} />
-        </Grid.Col>
-        <Grid.Col visibleFrom="lg" span={4} h={{ base: rem(300), lg: rem(700) }}>
-          <Stack h="100%" gap="md">
-            {sideNews.map((news, index) => (
-              <Box key={index} h={{ base: rem(240), sm: rem(240), md: '50%' }}>
-                <NewsCard newsItem={news} isMain={false} index={index + 1} />
-              </Box>
-            ))}
-          </Stack>
-        </Grid.Col>
-      </Grid>
-    </Container>
+    <Grid gutter="md">
+      <Grid.Col
+        span={{ base: 12, lg: 8 }}
+        h={{ base: rem(400), lg: rem(700) }}
+      >
+        <NewsCard newsItem={mainNews} isMain={true} index={0} />
+      </Grid.Col>
+      <Grid.Col
+        visibleFrom="lg"
+        span={4}
+        h={{ base: rem(300), lg: rem(700) }}
+      >
+        <Stack h="100%" gap="md">
+          {sideNews.map((news, index) => (
+            <Box
+              key={index}
+              h={{ base: rem(240), sm: rem(240), md: "50%" }}
+            >
+              <NewsCard newsItem={news} isMain={false} index={index + 1} />
+            </Box>
+          ))}
+        </Stack>
+      </Grid.Col>
+    </Grid>
   );
 }
