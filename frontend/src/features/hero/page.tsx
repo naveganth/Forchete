@@ -18,6 +18,7 @@ import { NoticiasError } from "../noticias/feedback/NoticiasError";
 import { NoticiasSkeleton2 } from "../noticias/feedback/NoticiasSkeleton2";
 import Link from "next/link";
 import { useState } from "react";
+import { useMediaQuery } from "@mantine/hooks";
 
 interface NewsCardProps {
   newsItem: any;
@@ -27,6 +28,7 @@ interface NewsCardProps {
 
 function NewsCard({ newsItem, isMain, index }: NewsCardProps) {
   const [hovered, setHovered] = useState(false);
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   return (
     <Link 
@@ -59,8 +61,8 @@ function NewsCard({ newsItem, isMain, index }: NewsCardProps) {
             position: "absolute",
             inset: 0,
             zIndex: 0,
-            transform: hovered ? 'scale(1.03)' : 'scale(1)',
-            transition: 'transform 0.3s ease',
+            transform: hovered && !isMobile ? 'scale(1.1)' : 'scale(1)',
+            transition: 'transform 0.4s ease',
           }}
         />
 
@@ -124,10 +126,10 @@ export default function Hero() {
   return (
     <Container size="xl" my="xl">
       <Grid gutter="md">
-        <Grid.Col span={{ base: 12, md: 8 }} h={{ base: rem(300), md: rem(700) }}>
+        <Grid.Col span={{ base: 12, lg: 8 }} h={{ base: rem(400), lg: rem(700) }}>
           <NewsCard newsItem={mainNews} isMain={true} index={0} />
         </Grid.Col>
-        <Grid.Col span={{ base: 12, md: 4 }} h={{ base: rem(300), md: rem(700) }}>
+        <Grid.Col visibleFrom="lg" span={4} h={{ base: rem(300), lg: rem(700) }}>
           <Stack h="100%" gap="md">
             {sideNews.map((news, index) => (
               <Box key={index} h={{ base: rem(240), sm: rem(240), md: '50%' }}>
