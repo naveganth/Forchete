@@ -16,7 +16,7 @@ import {
 } from "@mantine/core";
 import { useSearchNoticias } from "../../../hooks/use-search-noticias";
 import { useState } from "react";
-import { NoticiasSkeleton2 } from "../../hero/Skeleton";
+import { LatestNewsSkeleton } from "../UltimasNoticias/Skeleton";
 import { NoticiasError } from "../feedback/NoticiasError";
 import { useRouter, useSearchParams } from 'next/navigation';
 
@@ -51,7 +51,7 @@ export function Pesquisa() {
   }
 
   if (isLoading) {
-    return <NoticiasSkeleton2 count={10} />;
+    return <LatestNewsSkeleton count={10} />;
   }
 
   if (isError) {

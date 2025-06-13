@@ -2,7 +2,6 @@
 
 import {
   Box,
-  Container,
   Title,
   Text,
   Badge,
@@ -15,10 +14,10 @@ import {
 } from "@mantine/core";
 import { useNoticias } from "../../hooks/use-noticias";
 import { NoticiasError } from "../noticias/feedback/NoticiasError";
-import { NoticiasSkeleton2 } from "./Skeleton";
 import Link from "next/link";
 import { useState } from "react";
 import { useMediaQuery } from "@mantine/hooks";
+import { HeroSkeleton } from "../hero/Skeleton";
 
 interface NewsCardProps {
   newsItem: any;
@@ -123,7 +122,7 @@ export default function Hero() {
     page: 1,
   });
 
-  if (isLoading) return <NoticiasSkeleton2 />;
+  if (isLoading) return <HeroSkeleton />;
   if (isError) return <NoticiasError error={error} />;
   if (!data?.noticias?.length)
     return <NoticiasError message="Nenhuma notícia encontrada" />;
