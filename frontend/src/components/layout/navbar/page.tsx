@@ -5,7 +5,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { IconSettings } from "@tabler/icons-react";
 import { Search } from "./search";
 import classes from "./HeaderSearch.module.css";
-import { BairroModal } from "@/features/trending/BairroModal";
+import { BairroModal } from "@/features/noticias/PorBairros/BairroModal";
 import { rem } from '@mantine/core';
 
 const links = [

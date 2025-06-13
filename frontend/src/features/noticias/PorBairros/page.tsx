@@ -1,7 +1,7 @@
 "use client";
 
 import { Container, Grid } from "@mantine/core";
-import { LastNews } from "../search/lastNews";
+import { LastNews } from "../Pesquisa/Querry";
 import { BairroNews } from "./bairroNews";
 
 export default function Page() {

@@ -15,7 +15,7 @@ import {
 } from "@mantine/core";
 import { useNoticias } from "../../hooks/use-noticias";
 import { NoticiasError } from "../noticias/feedback/NoticiasError";
-import { NoticiasSkeleton2 } from "../noticias/feedback/NoticiasSkeleton2";
+import { NoticiasSkeleton2 } from "./Skeleton";
 import Link from "next/link";
 import { useState } from "react";
 import { useMediaQuery } from "@mantine/hooks";

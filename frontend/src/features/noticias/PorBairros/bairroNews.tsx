@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { Card, Stack, Title, Text, Button, Group, Badge, Image, Skeleton } from "@mantine/core";
 import Cookies from "js-cookie";
-import { useNoticias } from "../../hooks/use-noticias";
-import { NoticiasError } from "../noticias/feedback/NoticiasError";
+import { useNoticias } from "../../../hooks/use-noticias";
+import { NoticiasError } from "../feedback/NoticiasError";
 
 const COOKIE_NAME = "user-bairros";
 

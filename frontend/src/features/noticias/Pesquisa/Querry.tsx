@@ -14,17 +14,17 @@ import {
   Skeleton,
   Grid,
 } from "@mantine/core";
-import { useSearchNoticias } from "../../hooks/use-search-noticias";
+import { useSearchNoticias } from "../../../hooks/use-search-noticias";
 import { useState } from "react";
-import { NoticiasSkeleton2 } from "../noticias/feedback/NoticiasSkeleton2";
-import { NoticiasError } from "../noticias/feedback/NoticiasError";
+import { NoticiasSkeleton2 } from "../../hero/Skeleton";
+import { NoticiasError } from "../feedback/NoticiasError";
 import { useRouter, useSearchParams } from 'next/navigation';
 
 interface ImageLoadingState {
   [key: number]: boolean;
 }
 
-export function LastNews() {
+export function Pesquisa() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get('q') || '';
