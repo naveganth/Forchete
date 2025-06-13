@@ -3,6 +3,7 @@ import { Grid, Group, Skeleton, Stack } from "@mantine/core";
 export function LatestNewsSkeleton({ count = 5 }: { count?: number }) {
   return (
     <Stack gap="lg">
+      <Skeleton height={30} width={250} mb="md" />
       {Array(count)
         .fill(0)
         .map((_, index) => (
