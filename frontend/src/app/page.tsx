@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { Container, Grid } from "@mantine/core";
 import Hero from "../features/hero/page";
