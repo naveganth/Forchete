@@ -18,6 +18,10 @@ import Link from "next/link";
 import { useState } from "react";
 import { useMediaQuery } from "@mantine/hooks";
 import { HeroSkeleton } from "../hero/Skeleton";
+import dayjs from "dayjs";
+import "dayjs/locale/pt-br";
+
+dayjs.locale("pt-br");
 
 interface NewsCardProps {
   newsItem: any;
@@ -27,6 +31,7 @@ interface NewsCardProps {
 
 function NewsCard({ newsItem, isMain, index }: NewsCardProps) {
   const [hovered, setHovered] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   const isMobile = useMediaQuery("(max-width: 768px)");
 
   return (
@@ -50,18 +55,30 @@ function NewsCard({ newsItem, isMain, index }: NewsCardProps) {
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
       >
+        {!imageLoaded && (
+          <Box
+            style={{
+              position: "absolute",
+              inset: 0,
+              zIndex: 0,
+              backgroundColor: "var(--mantine-color-gray-3)",
+            }}
+          />
+        )}
         <Image
           src={newsItem.imagem}
           alt={newsItem.titulo}
           fit="cover"
           radius={0}
           h="100%"
+          onLoad={() => setImageLoaded(true)}
           style={{
             position: "absolute",
             inset: 0,
             zIndex: 0,
             transform: hovered && !isMobile ? "scale(1.1)" : "scale(1)",
-            transition: "transform 0.4s ease",
+            opacity: imageLoaded ? 1 : 0,
+            transition: "opacity 0.3s ease, transform 0.4s ease",
           }}
         />
 
@@ -78,7 +95,7 @@ function NewsCard({ newsItem, isMain, index }: NewsCardProps) {
           p="xl"
           style={{ position: "relative", zIndex: 2 }}
         >
-          <Group gap="xs">
+          <Group gap="xs" style={{ marginTop: "auto", marginBottom: "-10px"}}>
             {newsItem.regioes?.map((regiao: string, badgeIndex: number) => (
               <Badge
                 key={badgeIndex}
@@ -88,6 +105,7 @@ function NewsCard({ newsItem, isMain, index }: NewsCardProps) {
                 style={{
                   backgroundColor: "rgba(255,255,255,0.2)",
                   color: "white",
+                  borderRadius: "4px",
                 }}
               >
                 {regiao}
@@ -107,7 +125,7 @@ function NewsCard({ newsItem, isMain, index }: NewsCardProps) {
           {isMain && (
             <Text c="gray.2" size="lg">
               Publicado em:{" "}
-              {new Date(newsItem.data_post).toLocaleDateString()}
+              {dayjs(newsItem.data_post).format("DD [de] MMMM [de] YYYY")}
             </Text>
           )}
         </Stack>

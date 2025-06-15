@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, Stack, Title, Text, Button, Group, Badge, Image, Skeleton } from "@mantine/core";
+import { Card, Stack, Title, Text, Button, Group, Badge, Image, Skeleton, Box } from "@mantine/core";
 import Cookies from "js-cookie";
 import { useNoticias } from "../../../hooks/use-noticias";
 import { NoticiasError } from "../feedback/NoticiasError";
@@ -112,19 +112,29 @@ export function BairroNews() {
           <Stack gap="md">
             {data.noticias.map((noticia) => (
               <Card key={noticia.id} withBorder>
-                {!imageLoading[noticia.id] && <Skeleton height={100} mb="md" />}
-                <Image
-                  src={noticia.imagem}
-                  alt={noticia.titulo}
-                  height={100}
-                  fit="cover"
-                  fallbackSrc="https://placehold.co/600x400"
-                  onLoad={() => handleImageLoad(noticia.id)}
-                  style={{
-                    display: imageLoading[noticia.id] ? "block" : "none",
-                    marginBottom: "1rem",
-                  }}
-                />
+                <Box pos="relative">
+                  {!imageLoading[noticia.id] && (
+                    <Skeleton
+                      height={100}
+                      style={{ position: "absolute", inset: 0 }}
+                    />
+                  )}
+                  <Image
+                    src={noticia.imagem}
+                    alt={noticia.titulo}
+                    height={100}
+                    fit="cover"
+                    fallbackSrc="https://placehold.co/600x400"
+                    onLoad={() => handleImageLoad(noticia.id)}
+                    style={{
+                      opacity: imageLoading[noticia.id] ? 1 : 0,
+                      transition: "opacity 0.3s ease",
+                      position: "relative",
+                      zIndex: 1,
+                      marginBottom: "1rem",
+                    }}
+                  />
+                </Box>
                 <Title order={5} lineClamp={2} mb="xs">
                   {noticia.titulo}
                 </Title>

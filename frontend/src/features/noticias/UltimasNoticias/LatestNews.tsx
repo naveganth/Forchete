@@ -10,15 +10,17 @@ import {
   Text,
   Title,
   Skeleton,
+  Button,
 } from "@mantine/core";
-import { useNoticias } from "@/hooks/use-noticias";
-import { useState } from "react";
+import { useLatestNews } from "@/hooks/use-latest-news";
+import { useState, useEffect } from "react";
 import { NoticiasError } from "../feedback/NoticiasError";
 import Link from "next/link";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/pt-br";
 import { LatestNewsSkeleton } from "../UltimasNoticias/Skeleton";
+import { Noticia } from "@/types/noticia";
 
 dayjs.extend(relativeTime);
 dayjs.locale("pt-br");
@@ -29,17 +31,38 @@ interface ImageLoadingState {
 
 export function LatestNews() {
   const [imageLoading, setImageLoading] = useState<ImageLoadingState>({});
+  const [page, setPage] = useState(1);
+  const [allNews, setAllNews] = useState<Noticia[]>([]);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-  const { data, isLoading, error, isError } = useNoticias({
+  const { data, isLoading, error, isError } = useLatestNews({
     limit: 10,
-    page: 1,
+    page,
   });
+
+  useEffect(() => {
+    if (data?.noticias) {
+      const newNews = data.noticias.filter(
+        news => !allNews.some(existing => existing.id === news.id)
+      );
+      
+      if (newNews.length > 0) {
+        setAllNews(prev => [...prev, ...newNews]);
+      }
+      setIsLoadingMore(false);
+    }
+  }, [data?.noticias, allNews]);
 
   const handleImageLoad = (id: number) => {
     setImageLoading((prev) => ({ ...prev, [id]: true }));
   };
 
-  if (isLoading) {
+  const handleLoadMore = () => {
+    setIsLoadingMore(true);
+    setPage((prev) => prev + 1);
+  };
+
+  if (isLoading && page === 1) {
     return <LatestNewsSkeleton count={10} />;
   }
 
@@ -47,14 +70,16 @@ export function LatestNews() {
     return <NoticiasError error={error} />;
   }
 
-  if (!data?.noticias?.length) {
+  if (!allNews.length) {
     return <NoticiasError message="Nenhuma notícia encontrada" />;
   }
+
+  const hasMoreNews = data?.total ? data.total > (page * 10) + 8 : false;
 
   return (
     <Stack gap="lg">
       <Title order={2}>Últimas Notícias</Title>
-      {data.noticias.map((noticia) => (
+      {allNews.map((noticia) => (
         <Link
           key={noticia.id}
           href={noticia.link}
@@ -94,7 +119,7 @@ export function LatestNews() {
                 <Stack justify="space-between" h="100%">
                   <Stack gap="xs">
                     <Group gap="xs">
-                      {noticia.regioes.map((regiao) => (
+                      {noticia.regioes.map((regiao: string) => (
                         <Badge key={regiao} variant="light">
                           {regiao}
                         </Badge>
@@ -113,6 +138,16 @@ export function LatestNews() {
           </Box>
         </Link>
       ))}
+      {hasMoreNews && !isLoadingMore && (
+        <Button
+          onClick={handleLoadMore}
+          variant="light"
+          fullWidth
+        >
+          Carregar mais notícias
+        </Button>
+      )}
+      {isLoadingMore && <LatestNewsSkeleton count={5} />}
     </Stack>
   );
 }
