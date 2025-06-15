@@ -11,6 +11,7 @@ import {
   Title,
   Skeleton,
   Button,
+  Divider,
 } from "@mantine/core";
 import { useLatestNews } from "@/hooks/use-latest-news";
 import { useState, useEffect } from "react";
@@ -21,6 +22,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/pt-br";
 import { LatestNewsSkeleton } from "../UltimasNoticias/Skeleton";
 import { Noticia } from "@/types/noticia";
+import React from "react";
 
 dayjs.extend(relativeTime);
 dayjs.locale("pt-br");
@@ -79,64 +81,65 @@ export function LatestNews() {
   return (
     <Stack gap="lg">
       <Title order={2}>Últimas Notícias</Title>
-      {allNews.map((noticia) => (
-        <Link
-          key={noticia.id}
-          href={noticia.link}
-          target="_blank"
-          style={{ textDecoration: "none", color: "inherit" }}
-        >
-          <Box
-            pb="lg"
-            style={{
-              borderBottom: "1px solid var(--mantine-color-divider)",
-            }}
+      {allNews.map((noticia, index) => (
+        <React.Fragment key={noticia.id}>
+          <Link
+            href={noticia.link}
+            target="_blank"
+            style={{ textDecoration: "none", color: "inherit" }}
           >
-            <Grid>
-              <Grid.Col span={{ base: 12, sm: 4 }}>
-                <Box pos="relative">
-                  {!imageLoading[noticia.id] && (
-                    <Skeleton
+            <Box
+              style={{
+                borderBottom: "1px solid var(--mantine-color-divider)",
+              }}
+            >
+              <Grid>
+                <Grid.Col span={{ base: 12, sm: 4 }}>
+                  <Box pos="relative">
+                    {!imageLoading[noticia.id] && (
+                      <Skeleton
+                        height={150}
+                        style={{ position: "absolute", inset: 0 }}
+                      />
+                    )}
+                    <Image
+                      src={noticia.imagem}
+                      alt={noticia.titulo}
                       height={150}
-                      style={{ position: "absolute", inset: 0 }}
+                      radius="md"
+                      fit="cover"
+                      onLoad={() => handleImageLoad(noticia.id)}
+                      style={{
+                        opacity: imageLoading[noticia.id] ? 1 : 0,
+                        transition: "opacity 0.3s",
+                      }}
                     />
-                  )}
-                  <Image
-                    src={noticia.imagem}
-                    alt={noticia.titulo}
-                    height={150}
-                    radius="md"
-                    fit="cover"
-                    onLoad={() => handleImageLoad(noticia.id)}
-                    style={{
-                      opacity: imageLoading[noticia.id] ? 1 : 0,
-                      transition: "opacity 0.3s",
-                    }}
-                  />
-                </Box>
-              </Grid.Col>
-              <Grid.Col span={{ base: 12, sm: 8 }}>
-                <Stack justify="space-between" h="100%">
-                  <Stack gap="xs">
-                    <Group gap="xs">
-                      {noticia.regioes.map((regiao: string) => (
-                        <Badge key={regiao} variant="light">
-                          {regiao}
-                        </Badge>
-                      ))}
-                    </Group>
-                    <Title order={3} lineClamp={3}>
-                      {noticia.titulo}
-                    </Title>
+                  </Box>
+                </Grid.Col>
+                <Grid.Col span={{ base: 12, sm: 8 }}>
+                  <Stack justify="space-between" h="100%">
+                    <Stack gap="xs">
+                      <Group gap="xs">
+                        {noticia.regioes.map((regiao: string) => (
+                          <Badge key={regiao} variant="light">
+                            {regiao}
+                          </Badge>
+                        ))}
+                      </Group>
+                      <Title order={3} lineClamp={3}>
+                        {noticia.titulo}
+                      </Title>
+                    </Stack>
+                    <Text size="sm" c="dimmed">
+                      {dayjs(noticia.data_post).fromNow()}
+                    </Text>
                   </Stack>
-                  <Text size="sm" c="dimmed">
-                    {dayjs(noticia.data_post).fromNow()}
-                  </Text>
-                </Stack>
-              </Grid.Col>
-            </Grid>
-          </Box>
-        </Link>
+                </Grid.Col>
+              </Grid>
+            </Box>
+          </Link>
+          {index < allNews.length - 1 && <Divider my={4} />}
+        </React.Fragment>
       ))}
       {hasMoreNews && !isLoadingMore && (
         <Button
