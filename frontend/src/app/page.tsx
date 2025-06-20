@@ -4,12 +4,12 @@ import { Container, Grid } from "@mantine/core";
 import Hero from "../features/noticias/hero/page";
 import { LatestNews } from "../features/noticias/UltimasNoticias/LatestNews";
 import { BairroNews } from "../features/noticias/PorBairros/bairroNews";
-import { FirstVisitModalTrigger } from "@/components/layout/FirstVisitModalTrigger";
+import { FirstVisitModal } from "@/components/layout/FirstVisitModal";
 
 export default function HomePage() {
   return (
     <>
-      <FirstVisitModalTrigger />
+      <FirstVisitModal />
       <Container size="xl" py="xl">
         <Hero />
         <Grid columns={12} gutter="lg" mt="xl">

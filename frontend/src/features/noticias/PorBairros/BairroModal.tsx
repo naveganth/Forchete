@@ -123,11 +123,6 @@ export function BairroModal({
   const handleBairrosChange = (value: string[]) => {
     const limitedValue = value.slice(0, 5);
     setBairros(limitedValue);
-    if (limitedValue.length > 0) {
-      Cookies.set(COOKIE_NAME, JSON.stringify(limitedValue), COOKIE_OPTIONS);
-    } else {
-      Cookies.remove(COOKIE_NAME, { path: "/" });
-    }
   };
 
   const handleSave = () => {
