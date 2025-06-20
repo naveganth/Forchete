@@ -22,15 +22,23 @@ import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 import { useNewsByBairro } from "../../../hooks/use-bairro-news";
 import { Noticia } from "@/types/noticia";
 import React from "react";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import "dayjs/locale/pt-br";
+
+dayjs.extend(relativeTime);
+dayjs.locale("pt-br");
 
 function NewsItem({ item }: { item: Noticia }) {
   return (
     <Anchor
       href={item.link}
       style={{ textDecoration: "none", color: "inherit" }}
+      target="_blank"
+      rel="noopener noreferrer"
     >
-      <Group justify="space-between" align="center" wrap="nowrap">
-        <Stack gap={8}>
+      <Group justify="space-between" align="flex-start" wrap="nowrap">
+        <Stack gap={8} style={{ flex: 1 }}>
           <Text fw={700} size="md" style={{ lineHeight: 1.2 }}>
             {item.titulo}
           </Text>
@@ -43,6 +51,9 @@ function NewsItem({ item }: { item: Noticia }) {
               ))}
             </Group>
           )}
+          <Text size="xs" c="dimmed">
+            {dayjs(item.data_post).fromNow()}
+          </Text>
         </Stack>
         <Image
           src={item.imagem}
@@ -63,10 +74,30 @@ export function BairroNews() {
   const [opened, { toggle }] = useDisclosure(false);
 
   useEffect(() => {
-    const savedBairros = Cookies.get("user-bairros");
-    if (savedBairros) {
-      setSelectedBairros(JSON.parse(savedBairros));
-    }
+    const getBairrosFromCookie = () => {
+      const savedBairros = Cookies.get("user-bairros");
+      if (savedBairros) {
+        try {
+            const parsedBairros = JSON.parse(savedBairros);
+            if (Array.isArray(parsedBairros)) {
+                setSelectedBairros(parsedBairros);
+            }
+        } catch (e) {
+            console.error("Failed to parse bairros cookie:", e);
+            setSelectedBairros([]);
+        }
+      } else {
+        setSelectedBairros([]);
+      }
+    };
+
+    getBairrosFromCookie();
+
+    window.addEventListener("bairros-updated", getBairrosFromCookie);
+
+    return () => {
+      window.removeEventListener("bairros-updated", getBairrosFromCookie);
+    };
   }, []);
 
   const { news, loading, error } = useNewsByBairro(selectedBairros);
@@ -82,12 +113,19 @@ export function BairroNews() {
         </Alert>
       );
     }
-    if (news.length === 0) {
+    if (selectedBairros.length > 0 && news.length === 0) {
       return (
         <Text size="md" color="dimmed">
           Nenhuma notícia encontrada para os bairros selecionados.
         </Text>
       );
+    }
+    if(selectedBairros.length === 0) {
+        return (
+            <Text size="md" c="dimmed">
+                Selecione um ou mais bairros nas configurações para ver notícias personalizadas.
+            </Text>
+        )
     }
     return news.map((item, idx) => (
       <React.Fragment key={item.id}>

@@ -136,6 +136,7 @@ export function BairroModal({
     } else {
       Cookies.remove(COOKIE_NAME, { path: "/" });
     }
+    window.dispatchEvent(new Event("bairros-updated"));
     close();
   };
 
