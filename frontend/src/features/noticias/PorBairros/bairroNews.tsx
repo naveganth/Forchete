@@ -1,172 +1,143 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, Stack, Title, Text, Button, Group, Badge, Image, Skeleton, Box } from "@mantine/core";
+import {
+  Card,
+  Title,
+  Text,
+  Stack,
+  Image,
+  Group,
+  Anchor,
+  Divider,
+  Button,
+  Collapse,
+  Loader,
+  Alert,
+  Badge,
+} from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import Cookies from "js-cookie";
-import { useNoticias } from "../../../hooks/use-noticias";
-import { NoticiasError } from "../feedback/NoticiasError";
+import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
+import { useNewsByBairro } from "../../../hooks/useNewsByBairro";
+import { Noticia } from "@/types/noticia";
+import React from "react";
 
-const COOKIE_NAME = "user-bairros";
-
-interface ImageLoadingState {
-  [key: number]: boolean;
+function NewsItem({ item }: { item: Noticia }) {
+  return (
+    <Anchor
+      href={item.link}
+      style={{ textDecoration: "none", color: "inherit" }}
+    >
+      <Group justify="space-between" align="center" wrap="nowrap">
+        <Stack gap={8}>
+          <Text fw={700} size="md" style={{ lineHeight: 1.2 }}>
+            {item.titulo}
+          </Text>
+          {!!item.regioes.length && (
+            <Group>
+              {item.regioes.map((bairro) => (
+                <Badge key={bairro} color="blue" variant="light" size="sm">
+                  {bairro}
+                </Badge>
+              ))}
+            </Group>
+          )}
+        </Stack>
+        <Image
+          src={item.imagem}
+          alt={item.titulo}
+          w={72}
+          h={72}
+          fit="cover"
+          radius="md"
+          style={{ minWidth: 72, minHeight: 72 }}
+        />
+      </Group>
+    </Anchor>
+  );
 }
 
 export function BairroNews() {
-  const [bairros, setBairros] = useState<string[]>(() => {
-    const savedBairros = Cookies.get(COOKIE_NAME);
-    return savedBairros ? JSON.parse(savedBairros) : [];
-  });
-
-  const {
-    data,
-    isLoading,
-    error,
-    isError,
-  } = useNoticias({
-    limit: 5,
-    page: 1,
-    regioes: bairros.length > 0 ? bairros : undefined,
-  });
-
-  const [imageLoading, setImageLoading] = useState<ImageLoadingState>({});
-
-  const handleImageLoad = (id: number) => {
-    setImageLoading((prev) => ({ ...prev, [id]: true }));
-  };
+  const [selectedBairros, setSelectedBairros] = useState<string[]>([]);
+  const [opened, { toggle }] = useDisclosure(false);
 
   useEffect(() => {
-    const checkCookie = () => {
-      const cookieBairros = Cookies.get(COOKIE_NAME);
-      const parsedBairros = cookieBairros ? JSON.parse(cookieBairros) : [];
-      if (JSON.stringify(parsedBairros) !== JSON.stringify(bairros)) {
-        setBairros(parsedBairros);
-      }
-    };
-    checkCookie();
+    const savedBairros = Cookies.get("user-bairros");
+    if (savedBairros) {
+      setSelectedBairros(JSON.parse(savedBairros));
+    }
+  }, []);
 
-    const interval = setInterval(checkCookie, 1000);
+  const { news, loading, error } = useNewsByBairro(selectedBairros);
 
-    return () => clearInterval(interval);
-  }, [bairros]);
-
-  if (isLoading) {
-    return (
-      <Card shadow="sm" padding="lg" radius="md" withBorder>
-        <Stack>
-          <Group justify="space-between">
-            <Title order={3}>Notícias dos seus bairros</Title>
-          </Group>
-          <Stack gap="md">
-            {[1, 2, 3].map((i) => (
-              <Card key={i} withBorder>
-                <Skeleton height={100} mb="md" />
-                <Skeleton height={20} width="70%" mb="xs" />
-                <Skeleton height={16} width="40%" />
-              </Card>
-            ))}
-          </Stack>
-        </Stack>
-      </Card>
-    );
-  }
-
-  if (isError) {
-    return (
-      <Card shadow="sm" padding="lg" radius="md" withBorder>
-        <NoticiasError error={error} />
-      </Card>
-    );
-  }
-
-  if (bairros.length === 0) {
-    return (
-      <Card shadow="sm" padding="lg" radius="md" withBorder>
-        <Stack>
-          <Group justify="space-between">
-            <Title order={3}>Selecione seus bairros para ver notícias locais</Title>
-          </Group>
-          <Text c="dimmed" ta="center" py="xl">
-            Use o ícone de engrenagem na barra de navegação para selecionar seus bairros.
-          </Text>
-        </Stack>
-      </Card>
-    );
-  }
+  const renderContent = () => {
+    if (loading) {
+      return <Loader variant="dots" />;
+    }
+    if (error) {
+      return (
+        <Alert color="red" title="Erro">
+          {error}
+        </Alert>
+      );
+    }
+    if (news.length === 0) {
+      return (
+        <Text size="md" color="dimmed">
+          Nenhuma notícia encontrada para os bairros selecionados.
+        </Text>
+      );
+    }
+    return news.map((item, idx) => (
+      <React.Fragment key={item.id}>
+        <NewsItem item={item} />
+        {idx < news.length - 1 && <Divider my="sm" />}
+      </React.Fragment>
+    ));
+  };
 
   return (
-    <Card 
-      shadow="sm" 
-      padding="lg" 
-      radius="md" 
-      withBorder 
-    >
+    <Card shadow="sm" padding="lg" radius="md" withBorder>
       <Stack>
-        <Group justify="space-between">
-          <Title order={3}>
-            {`Notícias de ${bairros.length === 1 ? bairros[0] : "seus bairros"}`}
-          </Title>
-        </Group>
-        
-        {data?.noticias && data.noticias.length > 0 ? (
-          <Stack gap="md">
-            {data.noticias.map((noticia) => (
-              <Card key={noticia.id} withBorder>
-                <Box pos="relative">
-                  {!imageLoading[noticia.id] && (
-                    <Skeleton
-                      height={100}
-                      style={{ position: "absolute", inset: 0 }}
-                    />
-                  )}
-                  <Image
-                    src={noticia.imagem}
-                    alt={noticia.titulo}
-                    height={100}
-                    fit="cover"
-                    fallbackSrc="https://placehold.co/600x400"
-                    onLoad={() => handleImageLoad(noticia.id)}
-                    style={{
-                      opacity: imageLoading[noticia.id] ? 1 : 0,
-                      transition: "opacity 0.3s ease",
-                      position: "relative",
-                      zIndex: 1,
-                      marginBottom: "1rem",
-                    }}
-                  />
-                </Box>
-                <Title order={5} lineClamp={2} mb="xs">
-                  {noticia.titulo}
-                </Title>
-                <Group gap="xs" mb="xs">
-                  {noticia.regioes.map((regiao: string) => (
-                    <Badge key={regiao} variant="dot" size="sm">
-                      {regiao}
-                    </Badge>
-                  ))}
-                </Group>
-                <Text size="sm" c="dimmed" mb="xs">
-                  {new Date(noticia.data_post).toLocaleDateString()}
+        <Title order={3} mb="md">
+          Notícias dos seus bairros
+        </Title>
+        <Divider mb="sm" />
+
+        {renderContent()}
+
+        {!loading && !error && news.length > 0 && (
+          <>
+            <Button
+              variant="subtle"
+              fullWidth
+              rightSection={
+                opened ? <IconChevronUp size={14} /> : <IconChevronDown size={14} />
+              }
+              onClick={toggle}
+              px={0}
+              mt="md"
+              style={{
+                justifyContent: "space-between",
+                fontWeight: 500,
+                color: "#b00000",
+                background: "#fff6f6",
+                borderRadius: 8,
+              }}
+            >
+              Mais conteúdos recomendados
+            </Button>
+            <Collapse in={opened}>
+              <Stack mt="md">
+                <Text size="sm" color="dimmed">
+                  Mais notícias recomendadas (em desenvolvimento)...
                 </Text>
-                <Button
-                  component="a"
-                  href={noticia.link}
-                  target="_blank"
-                  variant="light"
-                  size="xs"
-                  fullWidth
-                >
-                  Leia mais
-                </Button>
-              </Card>
-            ))}
-          </Stack>
-        ) : (
-          <Text c="dimmed" ta="center" py="xl">
-            Nenhuma notícia encontrada para os bairros selecionados
-          </Text>
+              </Stack>
+            </Collapse>
+          </>
         )}
       </Stack>
     </Card>
   );
-} 
+}
