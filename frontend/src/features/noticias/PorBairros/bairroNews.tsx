@@ -19,7 +19,7 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import Cookies from "js-cookie";
 import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
-import { useNewsByBairro } from "../../../hooks/useNewsByBairro";
+import { useNewsByBairro } from "../../../hooks/use-bairro-news";
 import { Noticia } from "@/types/noticia";
 import React from "react";
 
