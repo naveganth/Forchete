@@ -358,6 +358,7 @@ dependencies = [
  "dotenvy",
  "mysql",
  "noticia",
+ "serde",
 ]
 
 [[package]]

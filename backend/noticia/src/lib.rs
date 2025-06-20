@@ -1,8 +1,8 @@
 use chrono::NaiveDate;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 // Classe principal da notícia
-#[derive(Debug, Serialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Noticia {
     pub id: Option<u32>,           // Id interno do banco de dados, opcional
     pub titulo: String,            // Título da notícia
