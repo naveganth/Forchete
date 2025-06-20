@@ -1,7 +1,7 @@
 "use client";
 
 import { Container, Grid } from "@mantine/core";
-import Hero from "../features/hero/page";
+import Hero from "../features/noticias/hero/page";
 import { LatestNews } from "../features/noticias/UltimasNoticias/LatestNews";
 import { BairroNews } from "../features/noticias/PorBairros/bairroNews";
 

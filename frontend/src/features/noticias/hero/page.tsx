@@ -12,12 +12,12 @@ import {
   rem,
   Grid,
 } from "@mantine/core";
-import { useNoticias } from "../../hooks/use-noticias";
-import { NoticiasError } from "../noticias/feedback/NoticiasError";
+import { useNoticias } from "../../../hooks/use-noticias";
+import { NoticiasError } from "../feedback/NoticiasError";
 import Link from "next/link";
 import { useState } from "react";
 import { useMediaQuery } from "@mantine/hooks";
-import { HeroSkeleton } from "../hero/Skeleton";
+import { HeroSkeleton } from "./Skeleton";
 import dayjs from "dayjs";
 import "dayjs/locale/pt-br";
 
