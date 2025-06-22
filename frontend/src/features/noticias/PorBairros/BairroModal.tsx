@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
 import {
-  Popover,
   Modal,
   MultiSelect,
   Button,
@@ -176,44 +175,13 @@ export function BairroModal({
     </Stack>
   );
 
-  if (isFirstTime) {
-    return (
-      <Popover
-        opened={opened}
-        onClose={close}
-        position="top"
-        withArrow
-        trapFocus
-        closeOnClickOutside={false}
-        closeOnEscape={false}
-        width={400}
-        styles={{
-          dropdown: {
-            position: "fixed",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            zIndex: 1000,
-          },
-        }}
-      >
-        <Popover.Target>
-          <div style={{ display: "none" }} />
-        </Popover.Target>
-        <Popover.Dropdown>{content}</Popover.Dropdown>
-      </Popover>
-    );
-  }
-
   return (
     <Modal
       opened={opened}
       onClose={close}
-      title="Selecione seus bairros"
+      title={isFirstTime ? "Bem-vindo!" : "Selecione seus bairros"}
       centered
       size="md"
-      closeOnClickOutside
-      closeOnEscape
     >
       {content}
     </Modal>
