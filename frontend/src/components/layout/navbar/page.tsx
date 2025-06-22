@@ -42,10 +42,10 @@ export function HeaderSearch() {
       <div className={classes.inner}>
         <Group>
           <a href="/">
-            <Image src="/next.svg" alt="Logo" w={"auto"} h={28} />
+            <Image src="/Logo White.svg" alt="Logo" w={"auto"} h={60} />
           </a>
         </Group>
-        <Box visibleFrom="sm">
+        <Box visibleFrom="sm" w={400}>
           <Search/>
         </Box>
         <Group>

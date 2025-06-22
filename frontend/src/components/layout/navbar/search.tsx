@@ -17,7 +17,7 @@ export function Search() {
   return (
     <TextInput
       className={classes.search}
-      placeholder="Buscar notícias..."
+      placeholder="Buscar..."
       leftSection={<IconSearch size={16} stroke={1.5} />}
       value={searchTerm}
       onChange={(event) => setSearchTerm(event.currentTarget.value)}
