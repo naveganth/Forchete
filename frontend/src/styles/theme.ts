@@ -1,7 +1,11 @@
 import { createTheme } from '@mantine/core';
 
 export const theme = createTheme({
-  fontFamily: 'Inter, sans-serif',
+  fontFamily: 'Friz Quadrata, sans-serif',
+    headings: {
+        fontFamily: 'Inter, sans-serif',
+        fontWeight: '700',
+    },
 
   colors: {
     brand: [
