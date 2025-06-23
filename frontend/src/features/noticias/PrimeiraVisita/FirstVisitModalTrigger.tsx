@@ -1,53 +1,48 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from 'react';
-import Cookies from 'js-cookie';
-import { BairroModal } from '@/features/noticias/PorBairros/BairroModal';
-import { FirstVisitModal } from '@/features/noticias/PrimeiraVisita/FirstVisitModal';
 import { useDisclosure } from '@mantine/hooks';
-
-const FIRST_VISIT_COOKIE = 'forchete-first-visit-done';
-const BAIRROS_COOKIE = 'user-bairros';
+import { FirstVisitModal } from './FirstVisitModal';
+import Cookies from "js-cookie";
+import { COOKIE_NAME, COOKIE_OPTIONS, LOCALSTORAGE_KEY } from "@/lib/constants";
 
 export function FirstVisitModalTrigger() {
-    const [opened, { open, close }] = useDisclosure(false);
-    const [isClient, setIsClient] = useState(false);
+  const [opened, { open, close }] = useDisclosure(false);
+  const [isClient, setIsClient] = useState(false);
 
-    useEffect(() => {
-        setIsClient(true);
-    }, []);
-
-    useEffect(() => {
-        if (isClient) {
-            const firstVisitDone = Cookies.get(FIRST_VISIT_COOKIE);
-            const hasBairros = Cookies.get(BAIRROS_COOKIE);
-
-            if (!firstVisitDone && !hasBairros) {
-                open();
-            }
-        }
-    }, [isClient, open]);
-
-    const handleClose = () => {
-        close();
-        Cookies.set(FIRST_VISIT_COOKIE, 'true', { expires: 365 });
-    };
-
-    const handleFirstVisitSave = (bairros: string[]) => {
-        Cookies.set(BAIRROS_COOKIE, JSON.stringify(bairros), { expires: 365 });
-        window.dispatchEvent(new Event('bairros-updated'));
-        handleClose();
-    };
-
-    if (!isClient) {
-        return null;
+  useEffect(() => {
+    setIsClient(true);
+    const hasVisited = localStorage.getItem('hasVisited');
+    if (!hasVisited) {
+      open();
     }
+  }, [open]);
 
-    return (
-        <FirstVisitModal
-            opened={opened}
-            onClose={handleClose}
-            onSave={handleFirstVisitSave}
-        />
-    );
+  const handleSave = (bairros: string[]) => {
+    localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(bairros));
+    localStorage.setItem('hasVisited', 'true');
+    localStorage.setItem('showPwaBannerAfterLoad', 'true');
+    
+    if (bairros.length > 0) {
+      Cookies.set(COOKIE_NAME, JSON.stringify(bairros), COOKIE_OPTIONS);
+    } else {
+      Cookies.remove(COOKIE_NAME, { path: "/" });
+    }
+    
+    close();
+    window.dispatchEvent(new CustomEvent('show-pwa-banner'));
+    window.dispatchEvent(new CustomEvent('bairros-updated'));
+  };
+
+  if (!isClient) {
+    return null;
+  }
+
+  return (
+    <FirstVisitModal
+      opened={opened}
+      onClose={close}
+      onSave={handleSave}
+    />
+  );
 }

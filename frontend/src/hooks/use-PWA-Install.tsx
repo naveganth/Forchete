@@ -1,53 +1,67 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback } from 'react';
-
-interface BeforeInstallPromptEvent extends Event {
-  readonly platforms: Array<string>;
-  readonly userChoice: Promise<{
-    outcome: 'accepted' | 'dismissed';
-    platform: string;
-  }>;
-  prompt(): Promise<void>;
-}
+import { useState, useEffect } from 'react';
 
 export const usePWAInstall = () => {
-  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-  const [isStandalone, setIsStandalone] = useState(false);
   const [isInstallable, setIsInstallable] = useState(false);
+  const [isInstallBannerVisible, setIsInstallBannerVisible] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 
   useEffect(() => {
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-      setIsStandalone(true);
-    }
-
-    const handleBeforeInstallPrompt = (event: Event) => {
-      event.preventDefault();
-      setInstallPrompt(event as BeforeInstallPromptEvent);
+    const beforeInstallPromptHandler = (e: Event) => {
+      e.preventDefault();
       setIsInstallable(true);
+      setDeferredPrompt(e);
     };
 
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('beforeinstallprompt', beforeInstallPromptHandler);
 
     return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('beforeinstallprompt', beforeInstallPromptHandler);
     };
   }, []);
 
-  const handleInstall = useCallback(async () => {
-    if (!installPrompt) return;
+  useEffect(() => {
+    const checkForBanner = () => {
+      const shouldShow = localStorage.getItem('showPwaBannerAfterLoad') === 'true';
+      if (isInstallable && shouldShow) {
+        setIsInstallBannerVisible(true);
+        localStorage.removeItem('showPwaBannerAfterLoad');
+      }
+    };
 
-    installPrompt.prompt();
-    const { outcome } = await installPrompt.userChoice;
+    checkForBanner();
 
-    if (outcome === 'accepted') {
-      console.log('Usuário aceitou a instalação do PWA');
-    } else {
-      console.log('Usuário recusou a instalação do PWA');
+    window.addEventListener('show-pwa-banner', checkForBanner);
+
+    return () => {
+      window.removeEventListener('show-pwa-banner', checkForBanner);
+    };
+  }, [isInstallable]);
+
+  const handleInstall = () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choiceResult: any) => {
+        if (choiceResult.outcome === 'accepted') {
+          console.log('User accepted the A2HS prompt');
+        } else {
+          console.log('User dismissed the A2HS prompt');
+        }
+        setDeferredPrompt(null);
+        setIsInstallBannerVisible(false);
+      });
     }
-    setInstallPrompt(null);
-    setIsInstallable(false);
-  }, [installPrompt]);
+  };
 
-  return { isStandalone, isInstallable, handleInstall };
+  const dismissInstallBanner = () => {
+    setIsInstallBannerVisible(false);
+  };
+
+  return {
+    isInstallable,
+    isInstallBannerVisible,
+    handleInstall,
+    dismissInstallBanner,
+  };
 };
