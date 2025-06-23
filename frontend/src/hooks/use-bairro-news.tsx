@@ -20,7 +20,7 @@ export function useNewsByBairro(bairros: string[]): UseNewsByBairroResult {
           if (!bairro) return { noticias: [] };
           const dataInicio = "2020-04-01";
           const dataFim = new Date().toISOString().split("T")[0];
-          const limit = 20; // Fetch more to have a good list after combining
+          const limit = 20;
           const offset = 0;
           const url = `https://projeti.gabrielataide.com/pegar_noticias?data_inicio=${dataInicio}&data_fim=${dataFim}&quantidade=${limit}&offset=${offset}&regiao=${bairro}`;
 
@@ -37,7 +37,6 @@ export function useNewsByBairro(bairros: string[]): UseNewsByBairroResult {
             return data;
           }
           
-          // Handle case where API might return a raw array
           if(Array.isArray(data)) {
             return { noticias: data };
           }
@@ -45,12 +44,12 @@ export function useNewsByBairro(bairros: string[]): UseNewsByBairroResult {
           return { noticias: [] };
         },
         enabled: bairros.length > 0,
-        staleTime: 1000 * 60 * 5, // 5 minutes
+        staleTime: 1000 * 60 * 5,
       };
     }),
   });
 
-  const loading = queries.some((q) => q.isLoading);
+  const loading = queries.some((q) => q.isPending);
   const errorQuery = queries.find((q) => q.isError);
   const error = errorQuery ? (errorQuery.error as Error).message : null;
 

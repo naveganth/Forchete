@@ -11,7 +11,7 @@ import Link from 'next/link';
 
 const links = [
   { link: "/noticia", label: "Notícias" },
-  { link: "/sobre", label: "Contato" },
+  { link: "/sobre", label: "Sobre" },
   { link: "/termos", label: "Termos" },
   { link: "/estatisticas", label: "Estatísticas" },
 ];

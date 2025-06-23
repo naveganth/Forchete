@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   Card,
   Title,
@@ -10,13 +10,9 @@ import {
   Group,
   Anchor,
   Divider,
-  Button,
-  Collapse,
-  Loader,
   Alert,
   Badge,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 import Cookies from "js-cookie";
 import { useNewsByBairro } from "../../../hooks/use-bairro-news";
 import { Noticia } from "@/types/noticia";
@@ -28,6 +24,8 @@ import { NoticiasSkeleton } from "./NoticiasSkeleton";
 
 dayjs.extend(relativeTime);
 dayjs.locale("pt-br");
+
+const COOKIE_NAME = "user-bairros";
 
 function NewsItem({ item }: { item: Noticia }) {
   return (
@@ -71,51 +69,44 @@ function NewsItem({ item }: { item: Noticia }) {
 
 export function BairroNews() {
   const [selectedBairros, setSelectedBairros] = useState<string[]>([]);
-  const [visibleCount] = useState(11);
-  const [reloading, setReloading] = useState(false);
-  const [opened, { toggle }] = useDisclosure(false);
 
-  useEffect(() => {
-    const getBairrosFromCookie = () => {
-      const savedBairros = Cookies.get("user-bairros");
-      if (savedBairros) {
-        try {
-            const parsedBairros = JSON.parse(savedBairros);
-            if (Array.isArray(parsedBairros)) {
-                setSelectedBairros(parsedBairros);
+  const getBairrosFromCookie = useCallback(() => {
+    const savedBairros = Cookies.get(COOKIE_NAME);
+    if (savedBairros) {
+      try {
+        const parsedBairros = JSON.parse(savedBairros);
+        if (Array.isArray(parsedBairros)) {
+          setSelectedBairros((currentBairros) => {
+            if (JSON.stringify(currentBairros) !== JSON.stringify(parsedBairros)) {
+              return parsedBairros;
             }
-        } catch (e) {
-            console.error("Failed to parse bairros cookie:", e);
-            setSelectedBairros([]);
+            return currentBairros;
+          });
         }
-      } else {
+      } catch (e) {
+        console.error("Failed to parse bairros cookie:", e);
         setSelectedBairros([]);
       }
-    };
-
-    getBairrosFromCookie();
-
-    window.addEventListener("bairros-updated", getBairrosFromCookie);
-
-    return () => {
-      window.removeEventListener("bairros-updated", getBairrosFromCookie);
-    };
+    } else {
+      setSelectedBairros([]);
+    }
   }, []);
 
   useEffect(() => {
-    setReloading(true);
-  }, [selectedBairros]);
+    getBairrosFromCookie();
+
+    const eventName = "bairros-updated";
+    window.addEventListener(eventName, getBairrosFromCookie);
+
+    return () => {
+      window.removeEventListener(eventName, getBairrosFromCookie);
+    };
+  }, [getBairrosFromCookie]);
 
   const { news, loading, error } = useNewsByBairro(selectedBairros);
 
-  useEffect(() => {
-    if (!loading && reloading) {
-      setReloading(false);
-    }
-  }, [loading, reloading]);
-
   const renderContent = () => {
-    if (loading || reloading) {
+    if (loading) {
       return <NoticiasSkeleton />;
     }
     if (error) {
@@ -125,24 +116,25 @@ export function BairroNews() {
         </Alert>
       );
     }
-    if (selectedBairros.length > 0 && news.length === 0) {
+    if (selectedBairros.length === 0) {
+        return (
+            <Text size="md" c="dimmed">
+                Escolha seus bairros favoritos nas configurações para ver as notícias aqui!
+            </Text>
+        )
+    }
+    if (news.length === 0) {
       return (
         <Text size="md" color="dimmed">
           Nenhuma notícia encontrada para os bairros selecionados.
         </Text>
       );
     }
-    if(selectedBairros.length === 0) {
-        return (
-            <Text size="md" c="dimmed">
-                Selecione um ou mais bairros nas configurações para ver notícias personalizadas.
-            </Text>
-        )
-    }
-    return news.slice(0, visibleCount).map((item, idx) => (
+    
+    return news.slice(0, 11).map((item, idx) => (
       <React.Fragment key={item.id}>
         <NewsItem item={item} />
-        {idx < Math.min(news.length, visibleCount) - 1 && <Divider my="sm" />}
+        {idx < Math.min(news.length, 11) - 1 && <Divider my="sm" />}
       </React.Fragment>
     ));
   };
@@ -151,10 +143,9 @@ export function BairroNews() {
     <Card shadow="sm" padding="lg" radius="md" withBorder style={{ position: 'sticky', top: 24, zIndex: 2 }}>
       <Stack>
         <Title order={3} mb="md">
-          Notícias dos seus bairros
+          Notícias dos Seus Bairros
         </Title>
         <Divider mb="sm" />
-
         {renderContent()}
       </Stack>
     </Card>
