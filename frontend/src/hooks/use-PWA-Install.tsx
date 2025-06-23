@@ -1,49 +1,54 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
 export const usePWAInstall = () => {
-  const [installPrompt, setInstallPrompt] = useState<Event | null>(null);
   const [isInstallable, setIsInstallable] = useState(false);
   const [isInstallBannerVisible, setIsInstallBannerVisible] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 
   useEffect(() => {
-    const handleBeforeInstallPrompt = (event: Event) => {
-      event.preventDefault();
-      setInstallPrompt(event);
+    const beforeInstallPromptHandler = (e: Event) => {
+      e.preventDefault();
       setIsInstallable(true);
+      setDeferredPrompt(e);
     };
 
-    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    window.addEventListener('beforeinstallprompt', beforeInstallPromptHandler);
 
     return () => {
-      window.removeEventListener(
-        "beforeinstallprompt",
-        handleBeforeInstallPrompt
-      );
+      window.removeEventListener('beforeinstallprompt', beforeInstallPromptHandler);
     };
   }, []);
 
   useEffect(() => {
-    const shouldShowBanner = localStorage.getItem("showPwaBannerAfterLoad");
+    const checkForBanner = () => {
+      const shouldShow = localStorage.getItem('showPwaBannerAfterLoad') === 'true';
+      if (isInstallable && shouldShow) {
+        setIsInstallBannerVisible(true);
+        localStorage.removeItem('showPwaBannerAfterLoad');
+      }
+    };
 
-    if (isInstallable && shouldShowBanner === "true") {
-      setIsInstallBannerVisible(true);
-      localStorage.removeItem("showPwaBannerAfterLoad");
-    }
+    checkForBanner();
+
+    window.addEventListener('show-pwa-banner', checkForBanner);
+
+    return () => {
+      window.removeEventListener('show-pwa-banner', checkForBanner);
+    };
   }, [isInstallable]);
 
   const handleInstall = () => {
-    if (installPrompt) {
-      (installPrompt as any).prompt();
-      (installPrompt as any).userChoice.then((choiceResult: any) => {
-        if (choiceResult.outcome === "accepted") {
-          console.log("Usuário instalou o PWA");
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choiceResult: any) => {
+        if (choiceResult.outcome === 'accepted') {
+          console.log('User accepted the A2HS prompt');
         } else {
-          console.log("Usuário recusou a instalação do PWA");
+          console.log('User dismissed the A2HS prompt');
         }
-        setInstallPrompt(null);
-        setIsInstallable(false);
+        setDeferredPrompt(null);
         setIsInstallBannerVisible(false);
       });
     }

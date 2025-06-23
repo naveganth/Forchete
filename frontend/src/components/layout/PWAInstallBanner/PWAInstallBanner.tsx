@@ -1,35 +1,34 @@
-'use client';
+"use client";
 
 import { Button, Paper, Text, Group, ActionIcon, useMantineTheme, Box } from '@mantine/core';
 import { IconDownload, IconX } from '@tabler/icons-react';
 import { usePWAInstall } from '@/hooks/use-PWA-Install';
-import { useState } from 'react';
 import classes from './PWAInstallBanner.module.css';
 
 export function PWAInstallBanner() {
-  const { isInstallable, handleInstall } = usePWAInstall();
-  const [visible, setVisible] = useState(true);
+  const { isInstallBannerVisible, handleInstall, dismissInstallBanner } = usePWAInstall();
   const theme = useMantineTheme();
 
-  const handleClose = () => {
-    setVisible(false);
-  };
-
-  if (!isInstallable || !visible) {
+  if (!isInstallBannerVisible) {
     return null;
   }
 
   return (
     <Box className={classes.wrapper}>
-      <Paper className={classes.banner} shadow="md" radius="lg" p="lg" withBorder>
+      <Paper
+        className={classes.banner}
+        shadow="md"
+        radius="lg"
+        p="lg"
+      >
         <Group justify="space-between" wrap="nowrap" gap="md">
           <IconDownload size={40} color={theme.colors.blue[6]} />
           <div style={{ flex: 1 }}>
             <Text fw={500} size="lg">
               Instale o Forchete!
             </Text>
-            <Text size="sm">
-              Adicione o aplicativo à sua tela inicial para uma experiência mais rápida e offline.
+            <Text size="sm" c="dimmed">
+              Adicione à sua tela inicial para uma experiência melhor.
             </Text>
           </div>
           <Group gap="sm">
@@ -43,7 +42,7 @@ export function PWAInstallBanner() {
             <ActionIcon
               variant="subtle"
               color="gray"
-              onClick={handleClose}
+              onClick={dismissInstallBanner}
               size="lg"
               radius="xl"
               aria-label="Fechar banner de instalação"

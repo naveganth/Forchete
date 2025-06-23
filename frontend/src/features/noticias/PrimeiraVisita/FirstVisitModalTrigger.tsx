@@ -1,30 +1,38 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from 'react';
+import { useDisclosure } from '@mantine/hooks';
 import { FirstVisitModal } from './FirstVisitModal';
 
 export function FirstVisitModalTrigger() {
-  const [opened, setOpened] = useState(false);
+  const [opened, { open, close }] = useDisclosure(false);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
     const hasVisited = localStorage.getItem('hasVisited');
     if (!hasVisited) {
-      setOpened(true);
+      open();
     }
-  }, []);
+  }, [open]);
 
   const handleSave = (bairros: string[]) => {
     localStorage.setItem('userBairros', JSON.stringify(bairros));
     localStorage.setItem('hasVisited', 'true');
     localStorage.setItem('showPwaBannerAfterLoad', 'true');
-    setOpened(false);
-    window.location.reload();
+    close();
+
+    window.dispatchEvent(new CustomEvent('show-pwa-banner'));
   };
+
+  if (!isClient) {
+    return null;
+  }
 
   return (
     <FirstVisitModal
       opened={opened}
-      onClose={() => setOpened(false)}
+      onClose={close}
       onSave={handleSave}
     />
   );
