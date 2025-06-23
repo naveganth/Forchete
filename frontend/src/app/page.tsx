@@ -4,7 +4,7 @@ import { Container, Grid } from "@mantine/core";
 import Hero from "../features/noticias/hero/page";
 import { LatestNews } from "../features/noticias/UltimasNoticias/LatestNews";
 import { BairroNews } from "../features/noticias/PorBairros/bairroNews";
-import { FirstVisitModalTrigger } from "@/components/layout/FirstVisitModalTrigger";
+import { FirstVisitModalTrigger } from "@/features/noticias/PrimeiraVisita/FirstVisitModalTrigger";
 
 export default function HomePage() {
   return (

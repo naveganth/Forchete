@@ -10,9 +10,10 @@ import { rem } from '@mantine/core';
 import Link from 'next/link';
 
 const links = [
-  { link: "/noticia", label: "Todas as Notícias" },
-  { link: "/sobre", label: "Sobre e Contato" },
-  { link: "/termos", label: "Termos de Serviço" },
+  { link: "/noticia", label: "Notícias" },
+  { link: "/sobre", label: "Contato" },
+  { link: "/termos", label: "Termos" },
+  { link: "/estatisticas", label: "Estatísticas" },
 ];
 
 export function HeaderSearch() {
@@ -43,15 +44,15 @@ export function HeaderSearch() {
       <div className={classes.inner}>
         <Group>
           <a href="/">
-            <Image src="/Logo White.svg" alt="Logo" w={"auto"} h={40} />
+            <Image src="/Logo White.svg" alt="Logo" w={"auto"} h={50} />
           </a>
         </Group>
-        <Box visibleFrom="sm">
+        <Box className={classes.searchContainer} visibleFrom="sm">
           <Search/>
         </Box>
         <Group>
           <Burger opened={opened} onClick={toggle} size="sm" hiddenFrom="sm" />
-          <Group ml={50} gap={5} className={classes.links} visibleFrom="sm">
+          <Group gap={5} className={classes.links} visibleFrom="sm">
             {items}
           </Group>
           <Box visibleFrom="sm">

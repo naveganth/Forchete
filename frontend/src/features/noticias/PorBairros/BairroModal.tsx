@@ -11,8 +11,13 @@ import {
   Text,
   Group,
   Badge,
+  Checkbox,
+  Center,
+  ThemeIcon,
+  Divider,
 } from "@mantine/core";
 import Cookies from "js-cookie";
+import { IconSparkles } from "@tabler/icons-react";
 
 const BAIRROS = [
   "Açaí",
@@ -108,6 +113,7 @@ export function BairroModal({
     const savedBairros = Cookies.get(COOKIE_NAME);
     return savedBairros ? JSON.parse(savedBairros) : [];
   });
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   const isControlled = externalOpened !== undefined;
   const opened = isControlled ? externalOpened : internalOpened;
@@ -135,11 +141,40 @@ export function BairroModal({
   };
 
   const content = (
-    <Stack w={400}>
+    <Stack w={isFirstTime ? 500 : 400} p={isFirstTime ? 'xl' : 'md'} gap={isFirstTime ? 'xl' : 'md'}>
+      {isFirstTime && (
+        <>
+          <Group justify="flex-end" mb={-24} mt={-24} mr={-24}>
+            <Button
+              variant="subtle"
+              color="gray"
+              size="md"
+              onClick={close}
+              style={{ alignSelf: 'flex-end', zIndex: 2 }}
+              px={6}
+              py={6}
+              radius="xl"
+              aria-label="Fechar"
+            >
+              <span style={{ fontSize: 28, lineHeight: 1 }}>&times;</span>
+            </Button>
+          </Group>
+          <Center>
+            <ThemeIcon size={56} radius="xl" color="brand" variant="light">
+              <IconSparkles size={36} />
+            </ThemeIcon>
+          </Center>
+          <Title order={2} ta="center" fw={800} c="brand.7" mb={4}>
+            Bem-vindo ao Forchete!
+          </Title>
+          <Text ta="center" size="lg" c="dimmed" mb="sm">
+            Personalize sua experiência escolhendo seus bairros favoritos.
+          </Text>
+          <Divider my="sm" />
+        </>
+      )}
       <Text size="sm" c="dimmed">
-        Para personalizar as notícias de acordo com suas regiões, por favor
-        selecione os bairros de seu interesse. Você pode selecionar mais de um
-        bairro.
+        Para personalizar as notícias de acordo com suas regiões, por favor selecione os bairros de seu interesse. Você pode selecionar mais de um bairro.
       </Text>
       <MultiSelect
         label="Bairros"
@@ -152,6 +187,8 @@ export function BairroModal({
         maxDropdownHeight={400}
         clearable
         description="Selecione até 5 bairros"
+        size={isFirstTime ? 'md' : 'sm'}
+        radius={isFirstTime ? 'md' : 'sm'}
       />
       {bairros.length > 0 && (
         <Group gap="xs" mt="xs">
@@ -165,10 +202,26 @@ export function BairroModal({
           ))}
         </Group>
       )}
+      {isFirstTime && (
+        <Checkbox
+          mt="md"
+          checked={acceptedTerms}
+          onChange={(event) => setAcceptedTerms(event.currentTarget.checked)}
+          label={<span>Li e concordo com os <a href="/termos" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline' }}>termos de uso</a> do site</span>}
+          required
+          size="md"
+        />
+      )}
       <Button
         onClick={handleSave}
         fullWidth
         mt="md"
+        size={isFirstTime ? 'lg' : 'md'}
+        radius={isFirstTime ? 'xl' : 'md'}
+        disabled={isFirstTime && !acceptedTerms}
+        variant={isFirstTime ? 'gradient' : 'filled'}
+        gradient={{ from: 'brand.6', to: 'brand.8', deg: 90 }}
+        style={isFirstTime ? { fontWeight: 700, letterSpacing: 1 } : {}}
       >
         Salvar
       </Button>
@@ -179,9 +232,14 @@ export function BairroModal({
     <Modal
       opened={opened}
       onClose={close}
-      title={isFirstTime ? "Bem-vindo!" : "Selecione seus bairros"}
+      title={isFirstTime ? null : "Selecione seus bairros"}
       centered
-      size="md"
+      size={isFirstTime ? "lg" : "md"}
+      radius={isFirstTime ? "xl" : "md"}
+      shadow={isFirstTime ? "xl" : "md"}
+      overlayProps={{ blur: 2, opacity: 0.2 }}
+      padding={0}
+      styles={isFirstTime ? { body: { background: 'var(--mantine-color-body)', borderRadius: 24, padding: 0 } } : {}}
     >
       {content}
     </Modal>

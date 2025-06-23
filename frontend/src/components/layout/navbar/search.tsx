@@ -29,6 +29,8 @@ export function Search() {
       }}
       size="md"
       radius="xl"
+      ml={80}
+      w={350}
     />
   );
 }
