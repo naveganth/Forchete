@@ -13,17 +13,7 @@ import {
   Divider,
 } from "@mantine/core";
 import Cookies from "js-cookie";
-
-const BAIRROS = [
-  "Açaí", "Alvorada", "Amazonas", "Araxá", "Beirol", "Bella Ville", "Bioparque", "Boné Azul", "Brasil Novo", "Buritis", "Buritizal", "Cabralzinho", "Cajari", "Central", "Chefe Clodoaldo", "Cidade Nova", "Congós", "Coração", "Fazendinha", "Goiabal", "Igarapé da Fortaleza", "Ilha Mirim", "Infraero 1", "Infraero 2", "Ipê", "Jardim América", "Jardim das Acácias", "Jardim Equatorial", "Jardim Felicidade I", "Jardim Felicidade II", "Jardim Marco Zero", "Jesus de Nazaré", "KM 9", "Lago da Vaca", "Lagoa Azul", "Laguinho", "Macapaba", "Marabaixo 1", "Marabaixo 2", "Marabaixo 3", "Marabaixo 4", "Morada das Palmeiras", "Muca", "Murici", "Nova Esperança", "Novo Buritizal", "Novo Horizonte", "Pacoval", "Palácio das Águas", "Pantanal", "Parque Aeroportuário", "Parque dos Jardins", "Pedrinhas", "Perpétuo Socorro", "Renascer", "Santa Inês", "Santa Rita", "São Lázaro", "Sol Nascente", "Trem", "Universidade", "Vale Verde", "Zerão", "Açucena", "Mucajá", "São José", "Miracema",
-].sort((a, b) => a.localeCompare(b, "pt-BR"));
-
-const COOKIE_NAME = "user-bairros";
-const COOKIE_OPTIONS = {
-  expires: 365,
-  path: "/",
-  sameSite: "strict" as const,
-};
+import { BAIRROS, COOKIE_NAME, LOCALSTORAGE_KEY, COOKIE_OPTIONS } from "@/lib/constants";
 
 interface BairroModalProps {
   opened: boolean;
@@ -36,16 +26,35 @@ export function BairroModal({ opened, onClose }: BairroModalProps) {
   useEffect(() => {
     if (opened) {
       const savedBairros = Cookies.get(COOKIE_NAME);
-      try {
-          if(savedBairros){
-              setBairros(JSON.parse(savedBairros));
-          } else {
-              setBairros([]);
+      if (savedBairros) {
+        try {
+          const parsedBairros = JSON.parse(savedBairros);
+          if (Array.isArray(parsedBairros)) {
+            setBairros(parsedBairros);
+            return;
           }
-      } catch (e) {
-          console.error("Failed to parse bairros from cookie", e)
-          setBairros([]);
+        } catch (e) {
+          console.error("Failed to parse bairros from cookie", e);
+        }
       }
+      
+      const localStorageBairros = localStorage.getItem(LOCALSTORAGE_KEY);
+      if (localStorageBairros) {
+        try {
+          const parsedBairros = JSON.parse(localStorageBairros);
+          if (Array.isArray(parsedBairros)) {
+            setBairros(parsedBairros);
+            if (parsedBairros.length > 0) {
+              Cookies.set(COOKIE_NAME, localStorageBairros, COOKIE_OPTIONS);
+            }
+            return;
+          }
+        } catch (e) {
+          console.error("Failed to parse bairros from localStorage", e);
+        }
+      }
+      
+      setBairros([]);
     }
   }, [opened]);
 

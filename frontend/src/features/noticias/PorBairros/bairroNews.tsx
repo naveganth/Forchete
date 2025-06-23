@@ -21,11 +21,10 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/pt-br";
 import { NoticiasSkeleton } from "./NoticiasSkeleton";
+import { COOKIE_NAME, LOCALSTORAGE_KEY, COOKIE_OPTIONS } from "@/lib/constants";
 
 dayjs.extend(relativeTime);
 dayjs.locale("pt-br");
-
-const COOKIE_NAME = "user-bairros";
 
 function NewsItem({ item }: { item: Noticia }) {
   return (
@@ -82,14 +81,35 @@ export function BairroNews() {
             }
             return currentBairros;
           });
+          return;
         }
       } catch (e) {
         console.error("Failed to parse bairros cookie:", e);
-        setSelectedBairros([]);
       }
-    } else {
-      setSelectedBairros([]);
     }
+    
+    const localStorageBairros = localStorage.getItem(LOCALSTORAGE_KEY);
+    if (localStorageBairros) {
+      try {
+        const parsedBairros = JSON.parse(localStorageBairros);
+        if (Array.isArray(parsedBairros)) {
+          setSelectedBairros((currentBairros) => {
+            if (JSON.stringify(currentBairros) !== JSON.stringify(parsedBairros)) {
+              return parsedBairros;
+            }
+            return currentBairros;
+          });
+          if (parsedBairros.length > 0) {
+            Cookies.set(COOKIE_NAME, localStorageBairros, COOKIE_OPTIONS);
+          }
+          return;
+        }
+      } catch (e) {
+        console.error("Failed to parse bairros from localStorage:", e);
+      }
+    }
+    
+    setSelectedBairros([]);
   }, []);
 
   useEffect(() => {
@@ -101,6 +121,14 @@ export function BairroNews() {
     return () => {
       window.removeEventListener(eventName, getBairrosFromCookie);
     };
+  }, [getBairrosFromCookie]);
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      getBairrosFromCookie();
+    }, 100);
+    
+    return () => clearTimeout(timer);
   }, [getBairrosFromCookie]);
 
   const { news, loading, error } = useNewsByBairro(selectedBairros);
