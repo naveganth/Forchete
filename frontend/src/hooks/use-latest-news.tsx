@@ -24,7 +24,6 @@ export function useLatestNews(params?: Params) {
         queryFn: async () => {
             const url = `https://projeti.gabrielataide.com/pegar_noticias?data_inicio=2020-04-01&data_fim=${new Date().toISOString().split('T')[0]}&quantidade=100&offset=0`;
             
-            console.log('Fetching latest news with URL:', url);
             const response = await fetch(url);
             const data = await response.json();
             
@@ -36,11 +35,6 @@ export function useLatestNews(params?: Params) {
             const startIndex = 3 + ((page - 1) * limit);
             const endIndex = startIndex + limit;
             const paginatedNews = allNews.slice(startIndex, endIndex);
-
-            console.log('Latest news items:', paginatedNews.slice(0, 3).map((n: Noticia) => ({
-                title: n.titulo,
-                date: n.data_post
-            })));
             
             return {
                 noticias: paginatedNews,
