@@ -7,11 +7,12 @@ import { Search } from "./search";
 import classes from "./HeaderSearch.module.css";
 import { BairroModal } from "@/features/noticias/PorBairros/BairroModal";
 import { rem } from '@mantine/core';
+import Link from 'next/link';
 
 const links = [
-  { link: "/noticia", label: "Noticias" },
-  { link: "/sobre", label: "Sobre" },
-  { link: "/contato", label: "Contato" },
+  { link: "/noticia", label: "Todas as Notícias" },
+  { link: "/sobre", label: "Sobre e Contato" },
+  { link: "/termos", label: "Termos de Serviço" },
 ];
 
 export function HeaderSearch() {
@@ -23,7 +24,7 @@ export function HeaderSearch() {
       key={link.label}
       href={link.link}
       className={classes.link}
-      onClick={() => {
+      onClick={(event) => {
         close();
       }}
     >
@@ -42,10 +43,10 @@ export function HeaderSearch() {
       <div className={classes.inner}>
         <Group>
           <a href="/">
-            <Image src="/Logo White.svg" alt="Logo" w={"auto"} h={60} />
+            <Image src="/Logo White.svg" alt="Logo" w={"auto"} h={40} />
           </a>
         </Group>
-        <Box visibleFrom="sm" w={400}>
+        <Box visibleFrom="sm">
           <Search/>
         </Box>
         <Group>
