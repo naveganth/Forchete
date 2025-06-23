@@ -68,6 +68,8 @@ export function HeaderSearch() {
 
   const logoStyle = { opacity: mounted ? 1 : 0, transition: "opacity 0.2s" };
 
+  const iconStyle = { opacity: mounted ? 1 : 0, transition: "opacity 0.2s" };
+
   const toggleTheme = () =>
     setColorScheme(computedColorScheme === "dark" ? "light" : "dark");
 
@@ -130,6 +132,7 @@ export function HeaderSearch() {
                   onClick={toggleTheme}
                   title="Alternar tema"
                   aria-label="Alternar tema"
+                  style={iconStyle}
                 >
                   {mounted ? (
                     computedColorScheme === "dark" ? (
@@ -147,6 +150,7 @@ export function HeaderSearch() {
                   onClick={handleBairroClick}
                   title="Selecionar bairros"
                   aria-label="Selecionar bairros"
+                  style={iconStyle}
                 >
                   <IconSettings size={18} />
                 </ActionIcon>

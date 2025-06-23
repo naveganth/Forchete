@@ -1,12 +1,15 @@
 "use client";
 
 import { Container } from "@mantine/core";
-import { Pesquisa } from "@/features/noticias/Pesquisa/Query"; 
+import { Pesquisa } from "@/features/noticias/Pesquisa/Query";
+import { Suspense } from "react";
 
 export default function SearchPage() {
   return (
     <Container size="xl" py="xl">
-      <Pesquisa />
+      <Suspense fallback={<div>Carregando busca...</div>}>
+        <Pesquisa />
+      </Suspense>
     </Container>
   );
 }
