@@ -85,7 +85,7 @@ export function FirstVisitModal({
             value={bairros}
             onChange={handleBairrosChange}
             searchable
-            comboboxProps={{ withinPortal: false, shadow: "md" }}
+            comboboxProps={{ withinPortal: true, shadow: "md" }}
             maxDropdownHeight={300}
             clearable
             size="md"
