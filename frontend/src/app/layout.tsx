@@ -21,6 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en" {...mantineHtmlProps}>
       <head>
+        <link rel="manifest" href="/manifest.json" />
         <meta name="apple-mobile-web-app-title" content="Forchete" />
         <ColorSchemeScript defaultColorScheme="auto" />
         <title>Forchete - Suas Notícias em um só lugar</title>
