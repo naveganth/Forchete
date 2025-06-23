@@ -1,0 +1,39 @@
+.wrapper {
+    position: fixed;
+    bottom: var(--mantine-spacing-lg);
+    left: var(--mantine-spacing-lg);
+    right: var(--mantine-spacing-lg);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .banner {
+    max-width: 600px;
+    width: 100%;
+    backdrop-filter: blur(10px);
+    background-color: rgba(var(--mantine-color-body-rgb), 0.8);
+  }
+
+  @media (max-width: 768px) {
+    .wrapper {
+      left: var(--mantine-spacing-sm);
+      right: var(--mantine-spacing-sm);
+      bottom: var(--mantine-spacing-sm);
+    }
+  
+    .banner {
+      padding: var(--mantine-spacing-md);
+    }
+  
+    .banner > div > .mantine-Group-root {
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--mantine-spacing-sm);
+    }
+  
+    .banner .mantine-Group-root:last-child {
+      flex-direction: row;
+      justify-content: flex-end;
+    }
+  }

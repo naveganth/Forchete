@@ -1,73 +1,26 @@
 "use client";
 
-import { puxarNoticias } from "./lib/puxarNoticias";
-import {
-  Badge,
-  Card,
-  Container,
-  Grid,
-  Image,
-  Stack,
-  Text,
-  Title,
-} from "@mantine/core";
+import { Container, Grid } from "@mantine/core";
+import Hero from "../features/noticias/hero/page";
+import { LatestNews } from "../features/noticias/UltimasNoticias/LatestNews";
+import { BairroNews } from "../features/noticias/PorBairros/bairroNews";
+import { FirstVisitModalTrigger } from "@/features/noticias/PrimeiraVisita/FirstVisitModalTrigger";
 
-interface Noticia {
-  id: string;
-  titulo: string;
-  imagem: string;
-  data_post: string;
-  regioes: string[];
-  link: string;
-}
-
-export default async function HomePage() {
-  const noticias: Noticia[] = await puxarNoticias();
-
+export default function HomePage() {
   return (
-    <Container py="xl">
-      <Title order={2} mb="lg">
-        Últimas Notícias
-      </Title>
-      <Grid>
-        {noticias.map((noticia) => (
-          <Grid.Col key={noticia.id} span={{ base: 12, sm: 6, md: 4 }}>
-            <Card shadow="sm" padding="lg" radius="md" withBorder>
-              <Card.Section>
-                <Image
-                  src={noticia.imagem}
-                  alt={noticia.titulo}
-                  height={160}
-                  fit="cover"
-                />
-              </Card.Section>
-
-              <Stack spacing="sm" mt="md">
-                <Title order={4}>{noticia.titulo}</Title>
-                <Text size="sm" color="dimmed">
-                  Publicado em:{" "}
-                  {new Date(noticia.data_post).toLocaleDateString()}
-                </Text>
-                <Stack spacing="xs" direction="row">
-                  {noticia.regioes.map((regiao) => (
-                    <Badge key={regiao} color="blue" variant="light">
-                      {regiao}
-                    </Badge>
-                  ))}
-                </Stack>
-                <Text
-                  component="a"
-                  href={noticia.link}
-                  target="_blank"
-                  color="blue"
-                >
-                  Leia mais
-                </Text>
-              </Stack>
-            </Card>
+    <>
+      <FirstVisitModalTrigger />
+      <Container size="xl" py="xl">
+        <Hero />
+        <Grid columns={12} gutter="lg" mt="xl">
+          <Grid.Col span={{ base: 12, lg: 8 }}>
+            <LatestNews />
           </Grid.Col>
-        ))}
-      </Grid>
-    </Container>
+          <Grid.Col span={{ base: 12, lg: 4 }}>
+            <BairroNews />
+          </Grid.Col>
+        </Grid>
+      </Container>
+    </>
   );
 }
