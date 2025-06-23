@@ -1,8 +1,8 @@
 'use client';
 
 import { IconBrandInstagram, IconBrandTwitter, IconBrandYoutube } from '@tabler/icons-react';
-import { ActionIcon, Container, Group, Text } from '@mantine/core';
-import { MantineLogo } from '@mantinex/mantine-logo';
+import { ActionIcon, Container, Group, Text, useMantineColorScheme, useComputedColorScheme } from '@mantine/core';
+import { useEffect, useState } from 'react';
 import classes from './FooterLinks.module.css';
 
 const data = [
@@ -36,6 +36,17 @@ const data = [
 ];
 
 export function FooterLinks() {
+  const { } = useMantineColorScheme();
+  const computedColorScheme = useComputedColorScheme('dark', { getInitialValueInEffect: true });
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+  const logoSrc = mounted
+    ? computedColorScheme === 'dark'
+      ? '/Dark.svg'
+      : '/Light.svg'
+    : '/Dark.svg';
+  const logoStyle = { opacity: mounted ? 1 : 0, transition: 'opacity 0.2s' };
+
   const groups = data.map((group) => {
     const links = group.links.map((link, index) => (
       <Text<'a'>
@@ -61,7 +72,7 @@ export function FooterLinks() {
     <footer className={classes.footer}>
       <Container className={classes.inner}>
         <div className={classes.logo}>
-          <MantineLogo size={30} />
+          <img src={logoSrc} alt="Logo" width={"auto"} height={50} style={logoStyle} />
           <Text size="xs" c="dimmed" className={classes.description}>
             Build fully functional accessible web applications faster than ever
           </Text>
