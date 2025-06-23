@@ -2,7 +2,6 @@
 
 import {
   Pagination,
-  Card,
   Image,
   Text,
   Title,
@@ -13,12 +12,22 @@ import {
   Stack,
   Skeleton,
   Grid,
+  Alert,
+  Divider,
 } from "@mantine/core";
 import { useSearchNoticias } from "../../../hooks/use-search-noticias";
 import { useState } from "react";
-import { LatestNewsSkeleton } from "../UltimasNoticias/Skeleton";
+import { PesquisaSkeleton } from "./PesquisaSkeleton"; // Importando o novo Skeleton
 import { NoticiasError } from "../feedback/NoticiasError";
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Highlight } from "@/components/layout/ui/Highlight";
+import { IconSearchOff, IconChevronRight } from "@tabler/icons-react";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import "dayjs/locale/pt-br";
+
+dayjs.extend(relativeTime);
+dayjs.locale("pt-br");
 
 interface ImageLoadingState {
   [key: number]: boolean;
@@ -51,7 +60,7 @@ export function Pesquisa() {
   }
 
   if (isLoading) {
-    return <LatestNewsSkeleton count={10} />;
+    return <PesquisaSkeleton count={10} />;
   }
 
   if (isError) {
@@ -59,83 +68,95 @@ export function Pesquisa() {
   }
 
   if (!data?.noticias?.length) {
-    return <NoticiasError message={`Nenhuma notícia encontrada para "${searchQuery}"`} />;
+    return (
+        <Alert icon={<IconSearchOff size="1.5rem" />} title="Nenhum resultado" color="orange" variant="light" radius="md" mt="xl">
+            <Text>Nenhuma notícia encontrada para "<strong>{searchQuery}</strong>".</Text>
+            <Text size="sm" mt="sm">
+                Tente verificar a ortografia ou usar termos de pesquisa diferentes.
+            </Text>
+        </Alert>
+    );
   }
 
   const totalPages = Math.ceil(data.total / 10);
 
   return (
     <>
-      <Title order={2} mb="md">
-        {searchQuery 
-          ? `Resultados da busca: "${searchQuery}"`
-          : "Últimas notícias"
-        }
+      <Title order={2} mb="xl">
+        Resultados da busca: "<Highlight text={searchQuery} highlight={searchQuery} />"
       </Title>
       
-      <Stack gap="md">
-        {data.noticias.map((noticia) => (
-          <Card
-            key={noticia.id}
-            shadow="sm"
-            padding="lg"
-            radius="md"
-            withBorder
-          >
-            <Grid columns={12} gutter="lg">
-              <Grid.Col span={{ base: 12, sm: 4 }}>
-                <Box pos="relative">
-                  {!imageLoading[noticia.id] && (
-                    <Skeleton 
-                      height={200} 
-                      style={{ position: 'absolute', top: 0, left: 0, right: 0 }}
+      <Stack>
+        {data.noticias.map((noticia, index) => (
+            <div key={noticia.id}>
+                <Grid columns={12} gutter="lg">
+                <Grid.Col span={{ base: 12, sm: 4 }}>
+                    <Box pos="relative">
+                    {!imageLoading[noticia.id] && (
+                        <Skeleton 
+                        height={180}
+                        radius="md"
+                        style={{ position: 'absolute', top: 0, left: 0, right: 0 }}
+                        />
+                    )}
+                    <Image
+                        src={noticia.imagem}
+                        alt={noticia.titulo}
+                        height={180}
+                        radius="md"
+                        fallbackSrc="https://placehold.co/600x400"
+                        fit="cover"
+                        onLoad={() => handleImageLoad(noticia.id)}
+                        style={{
+                        opacity: imageLoading[noticia.id] ? 1 : 0,
+                        transition: 'opacity 0.2s ease-in-out',
+                        position: 'relative',
+                        zIndex: 1
+                        }}
                     />
-                  )}
-                  <Image
-                    src={noticia.imagem}
-                    alt={noticia.titulo}
-                    height={200}
-                    fallbackSrc="https://placehold.co/600x400"
-                    fit="cover"
-                    onLoad={() => handleImageLoad(noticia.id)}
-                    style={{
-                      opacity: imageLoading[noticia.id] ? 1 : 0,
-                      transition: 'opacity 0.2s ease-in-out',
-                      position: 'relative',
-                      zIndex: 1
-                    }}
-                  />
-                </Box>
-              </Grid.Col>
-              <Grid.Col span={{ base: 12, sm: 8 }}>
-                <Stack gap="xs">
-                  <Group gap="xs">
-                    {noticia.regioes.map((regiao: string) => (
-                      <Badge key={regiao} variant="light" color="blue">
-                        {regiao}
-                      </Badge>
-                    ))}
-                  </Group>
-                  <Title order={4} lineClamp={2}>
-                    {noticia.titulo}
-                  </Title>
-                  <Text size="sm" c="dimmed">
-                    Publicado em:{" "}
-                    {new Date(noticia.data_post).toLocaleDateString()}
-                  </Text>
-                  <Button
-                    component="a"
-                    href={noticia.link}
-                    target="_blank"
-                    variant="light"
-                    size="sm"
-                  >
-                    Leia mais
-                  </Button>
-                </Stack>
-              </Grid.Col>
-            </Grid>
-          </Card>
+                    </Box>
+                </Grid.Col>
+                <Grid.Col span={{ base: 12, sm: 8 }}>
+                    <Stack justify="space-between" h="100%" gap="xs">
+                        <Stack gap="xs">
+                            <Group gap="xs">
+                                {noticia.regioes.map((regiao: string) => (
+                                <Badge key={regiao} variant="light" color="blue">
+                                    <Highlight text={regiao} highlight={searchQuery} />
+                                </Badge>
+                                ))}
+                            </Group>
+                            <a
+                              href={noticia.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{ textDecoration: 'none', color: 'inherit' }}
+                            >
+                              <Title order={4} lineClamp={3}>
+                                <Highlight text={noticia.titulo} highlight={searchQuery} />
+                              </Title>
+                            </a>
+                        </Stack>
+                        <Group justify="space-between" align="center">
+                            <Text size="sm" c="dimmed">
+                                {dayjs(noticia.data_post).fromNow()}
+                            </Text>
+                            <Button
+                                component="a"
+                                href={noticia.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                variant="light"
+                                rightSection={<IconChevronRight size={14} />}
+                            >
+                                Saiba mais
+                            </Button>
+                        </Group>
+                    </Stack>
+                </Grid.Col>
+                </Grid>
+                {index < data.noticias.length - 1 && <Divider my="lg" />}
+            </div>
         ))}
       </Stack>
 
@@ -151,4 +172,4 @@ export function Pesquisa() {
       )}
     </>
   );
-} 
+}
