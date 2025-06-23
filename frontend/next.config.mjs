@@ -8,6 +8,7 @@ const withPWA = nextPWA({
 });
 
 const nextConfig = {
+  output: 'standalone',
   reactStrictMode: false,
   trailingSlash: true,
   eslint: {
