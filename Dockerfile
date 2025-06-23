@@ -1,11 +1,6 @@
-# Dockerfile do frontend
-# Pra rodar utilize:
-
-# docker build -t forchete-frontend .
-
 FROM node:20-alpine AS builder
 WORKDIR /app
-COPY package.json package-lock.json* ./
+COPY ./frontend/package.json ./frontend/package-lock.json* ./
 RUN npm install
 COPY . .
 RUN npm run build
@@ -22,7 +17,3 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 USER nextjs
 EXPOSE 3000
 CMD ["node", "server.js"]
-
-# Pra rodar o container:
-
-# docker run -p 3000:3000 forchete-frontend
