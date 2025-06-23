@@ -1,6 +1,6 @@
 "use client";
 
-import { ListNoticias } from "@/features/noticias/search/Noticias"
+import { Pesquisa } from "@/features/noticias/Pesquisa/Query"
 
 export interface Noticia {
   id: string
@@ -12,5 +12,5 @@ export interface Noticia {
 }
 
 export default function HomePage() {
-  return <ListNoticias />
+  return <Pesquisa />
 }

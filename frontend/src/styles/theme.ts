@@ -83,7 +83,7 @@ export const theme = createTheme({
     Pagination: {
         styles: (theme: MantineTheme) => ({
             control: {
-                '&[data-active]': {
+                '[dataActive]': {
                     backgroundImage: 'linear-gradient(90deg, var(--mantine-color-brand-6), var(--mantine-color-brand-8))',
                     border: 0,
                 },
