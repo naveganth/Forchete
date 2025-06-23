@@ -7,7 +7,7 @@ import { useState } from 'react';
 import classes from './PWAInstallBanner.module.css';
 
 export function PWAInstallBanner() {
-  const { isStandalone, isInstallable, handleInstall } = usePWAInstall();
+  const { isInstallable, handleInstall } = usePWAInstall();
   const [visible, setVisible] = useState(true);
   const theme = useMantineTheme();
 
@@ -15,7 +15,7 @@ export function PWAInstallBanner() {
     setVisible(false);
   };
 
-  if (isStandalone || !isInstallable || !visible) {
+  if (!isInstallable || !visible) {
     return null;
   }
 

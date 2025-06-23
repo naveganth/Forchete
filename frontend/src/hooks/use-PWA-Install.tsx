@@ -1,53 +1,62 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback } from 'react';
-
-interface BeforeInstallPromptEvent extends Event {
-  readonly platforms: Array<string>;
-  readonly userChoice: Promise<{
-    outcome: 'accepted' | 'dismissed';
-    platform: string;
-  }>;
-  prompt(): Promise<void>;
-}
+import { useState, useEffect } from "react";
 
 export const usePWAInstall = () => {
-  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-  const [isStandalone, setIsStandalone] = useState(false);
+  const [installPrompt, setInstallPrompt] = useState<Event | null>(null);
   const [isInstallable, setIsInstallable] = useState(false);
+  const [isInstallBannerVisible, setIsInstallBannerVisible] = useState(false);
 
   useEffect(() => {
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-      setIsStandalone(true);
-    }
-
     const handleBeforeInstallPrompt = (event: Event) => {
       event.preventDefault();
-      setInstallPrompt(event as BeforeInstallPromptEvent);
+      setInstallPrompt(event);
       setIsInstallable(true);
     };
 
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
 
     return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener(
+        "beforeinstallprompt",
+        handleBeforeInstallPrompt
+      );
     };
   }, []);
 
-  const handleInstall = useCallback(async () => {
-    if (!installPrompt) return;
+  useEffect(() => {
+    const shouldShowBanner = localStorage.getItem("showPwaBannerAfterLoad");
 
-    installPrompt.prompt();
-    const { outcome } = await installPrompt.userChoice;
-
-    if (outcome === 'accepted') {
-      console.log('Usuário aceitou a instalação do PWA');
-    } else {
-      console.log('Usuário recusou a instalação do PWA');
+    if (isInstallable && shouldShowBanner === "true") {
+      setIsInstallBannerVisible(true);
+      localStorage.removeItem("showPwaBannerAfterLoad");
     }
-    setInstallPrompt(null);
-    setIsInstallable(false);
-  }, [installPrompt]);
+  }, [isInstallable]);
 
-  return { isStandalone, isInstallable, handleInstall };
+  const handleInstall = () => {
+    if (installPrompt) {
+      (installPrompt as any).prompt();
+      (installPrompt as any).userChoice.then((choiceResult: any) => {
+        if (choiceResult.outcome === "accepted") {
+          console.log("Usuário instalou o PWA");
+        } else {
+          console.log("Usuário recusou a instalação do PWA");
+        }
+        setInstallPrompt(null);
+        setIsInstallable(false);
+        setIsInstallBannerVisible(false);
+      });
+    }
+  };
+
+  const dismissInstallBanner = () => {
+    setIsInstallBannerVisible(false);
+  };
+
+  return {
+    isInstallable,
+    isInstallBannerVisible,
+    handleInstall,
+    dismissInstallBanner,
+  };
 };
