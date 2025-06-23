@@ -80,7 +80,7 @@ export default function SobrePage() {
         <Anchor href="mailto:lucas.navegantes@academico.meta.edu.br">
             <Group>
                 <IconMail size={20} />
-                <Text>lucas.navegantes@academico.meta.edu.br</Text>
+                <Text truncate>lucas.navegantes@academico.meta.edu.br</Text>
             </Group>
         </Anchor>
       </Paper>

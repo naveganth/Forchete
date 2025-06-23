@@ -1,80 +1,65 @@
-"Use client";
+"use client";
 
 import { useState } from "react";
 import {
   Modal,
-  MultiSelect,
   Button,
-  Stack,
-  Title,
-  Text,
-  Group,
-  Badge,
+  MultiSelect,
   Checkbox,
+  Group,
+  Stack,
+  Text,
   Center,
   ThemeIcon,
-  Divider,
   Anchor,
   Box,
 } from "@mantine/core";
-import { IconSparkles } from "@tabler/icons-react";
+import { IconGrillFork } from "@tabler/icons-react";
+import { useMediaQuery } from "@mantine/hooks";
 
 const BAIRROS = [
   "Açaí",
   "Alvorada",
-  "Amazonas",
   "Araxá",
   "Beirol",
-  "Bella Ville",
-  "Bioparque",
   "Boné Azul",
   "Brasil Novo",
-  "Buritis",
   "Buritizal",
   "Cabralzinho",
-  "Cajari",
   "Central",
   "Chefe Clodoaldo",
   "Cidade Nova",
   "Congós",
-  "Coração",
+  "Coracao",
   "Fazendinha",
   "Goiabal",
   "Igarapé da Fortaleza",
-  "Ilha Mirim",
-  "Infraero 1",
-  "Infraero 2",
+  "Ilaídes",
+  "Infraero",
   "Ipê",
-  "Jardim América",
-  "Jardim das Acácias",
   "Jardim Equatorial",
-  "Jardim Felicidade I",
-  "Jardim Felicidade II",
-  "Jardim Marco Zero",
+  "Jardim Felicidade",
   "Jesus de Nazaré",
-  "KM 9",
   "Lago da Vaca",
-  "Lagoa Azul",
-  "Laguinho",
+  "Lagoinha",
   "Macapaba",
-  "Marabaixo 1",
-  "Marabaixo 2",
-  "Marabaixo 3",
-  "Marabaixo 4",
+  "Marco Zero",
+  "Marabaixo",
+  "Mestre Oscar",
   "Morada das Palmeiras",
-  "Muca",
-  "Murici",
+  "Muruci",
   "Nova Esperança",
   "Novo Buritizal",
   "Novo Horizonte",
   "Pacoval",
-  "Palácio das Águas",
+  "Palmares",
   "Pantanal",
-  "Parque Aeroportuário",
-  "Parque dos Jardins",
+  "Parque dos Buritis",
   "Pedrinhas",
   "Perpétuo Socorro",
+  "Ponte",
   "Renascer",
+  "Sahar",
   "Santa Inês",
   "Santa Rita",
   "São Lázaro",
@@ -83,11 +68,7 @@ const BAIRROS = [
   "Universidade",
   "Vale Verde",
   "Zerão",
-  "Açucena",
-  "Mucajá",
-  "São José",
-  "Miracema",
-].sort((a, b) => a.localeCompare(b, "pt-BR"));
+];
 
 interface FirstVisitModalProps {
   opened: boolean;
@@ -102,16 +83,15 @@ export function FirstVisitModal({
 }: FirstVisitModalProps) {
   const [bairros, setBairros] = useState<string[]>([]);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const isMobile = useMediaQuery("(max-width: 50em)");
 
-  const handleSave = () => {
-    if (bairros.length > 0 && acceptedTerms) {
-      onSave(bairros);
-    }
+  const handleBairrosChange = (selectedBairros: string[]) => {
+    setBairros(selectedBairros);
   };
 
-  const handleBairrosChange = (value: string[]) => {
-    if (value.length <= 5) {
-      setBairros(value);
+  const handleSave = () => {
+    if (acceptedTerms) {
+      onSave(bairros);
     }
   };
 
@@ -122,37 +102,33 @@ export function FirstVisitModal({
       withCloseButton={false}
       closeOnClickOutside={false}
       closeOnEscape={false}
+      fullScreen={isMobile}
       centered
       size="lg"
-      radius="lg"
+      radius={isMobile ? 0 : "lg"}
       shadow="xl"
       overlayProps={{ blur: 3, opacity: 0.5 }}
       padding={0}
+      trapFocus={false}
       transitionProps={{ transition: "pop", duration: 200 }}
     >
       <Box p="xl">
         <Stack gap="lg">
           <Center>
-            <ThemeIcon size={64} radius="xl" color="brand" variant="light">
-              <IconSparkles size={40} />
+            <ThemeIcon size={64} radius="xl" variant="outline">
+              <IconGrillFork size={40} style={{ transform: 'rotate(90deg)' }} />
             </ThemeIcon>
           </Center>
 
           <Stack gap={4}>
-            <Title order={2} ta="center" fw={800} c="brand.7">
+            <Text fz="xl" fw={600} ta="center">
               Bem-vindo ao Forchete!
-            </Title>
-            <Text ta="center" size="md" c="dimmed">
-              Para personalizar sua experiência, aceite
-              nossos termos!
+            </Text>
+            <Text ta="center" c="dimmed">
+              Para começar, selecione os bairros que mais lhe interessam. Isso
+              nos ajudará a personalizar sua experiência.
             </Text>
           </Stack>
-
-          <Divider label="Selecione suas preferências" labelPosition="center" />
-
-          <Text size="sm" c="dimmed" ta="center">
-            Escolha até 5 bairros para ver notícias de seu interesse.
-          </Text>
 
           <MultiSelect
             label="Seus bairros de interesse"
@@ -160,58 +136,38 @@ export function FirstVisitModal({
             data={BAIRROS}
             value={bairros}
             onChange={handleBairrosChange}
-            searchable  
-            comboboxProps={{ withinPortal: true, shadow: "md" }}
+            searchable
+            comboboxProps={{ withinPortal: false, shadow: "md" }}
             maxDropdownHeight={300}
             clearable
             size="md"
             radius="md"
           />
 
-          {bairros.length > 0 && (
-            <Group gap="xs" mt="xs">
-              {bairros.map((bairro) => (
-                <Badge key={bairro} variant="light" color="blue" radius="sm">
-                  {bairro}
-                </Badge>
-              ))}
-            </Group>
-          )}
-
           <Checkbox
-            mt="md"
             checked={acceptedTerms}
             onChange={(event) => setAcceptedTerms(event.currentTarget.checked)}
             label={
-              <Text component="span" size="sm">
+              <Text fz="xs">
                 Eu li e concordo com os{" "}
-                <Anchor
-                  href="/termos"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  size="sm"
-                >
-                  Termos de Uso
+                <Anchor href="/termos" target="_blank" fz="xs">
+                  Termos de Serviço
                 </Anchor>
                 .
               </Text>
             }
-            required
-            size="sm"
           />
 
-          <Button
-            onClick={handleSave}
-            mt="md"
-            size="lg"
-            radius="xl"
-            disabled={!acceptedTerms || bairros.length === 0}
-            variant="gradient"
-            gradient={{ from: "brand.6", to: "brand.8", deg: 90 }}
-            fullWidth
-          >
-            Salvar e continuar
-          </Button>
+          <Group justify="flex-end">
+            <Button
+              onClick={handleSave}
+              disabled={!acceptedTerms || bairros.length === 0}
+              size="md"
+              radius="md"
+            >
+              Começar a usar
+            </Button>
+          </Group>
         </Stack>
       </Box>
     </Modal>

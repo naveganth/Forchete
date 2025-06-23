@@ -125,36 +125,36 @@ export function HeaderSearch() {
           <Group>
             <Group visibleFrom="lg">
               <Group gap="sm">{desktopItems}</Group>
-              <Group gap="sm">
-                <ActionIcon
-                  variant="default"
-                  size="lg"
-                  onClick={toggleTheme}
-                  title="Alternar tema"
-                  aria-label="Alternar tema"
-                  style={iconStyle}
-                >
-                  {mounted ? (
-                    computedColorScheme === "dark" ? (
-                      <IconSun size={18} />
-                    ) : (
-                      <IconMoon size={18} />
-                    )
-                  ) : (
-                    <IconMoon size={18} />
-                  )}
-                </ActionIcon>
-                <ActionIcon
-                  variant="default"
-                  size="lg"
-                  onClick={handleBairroClick}
-                  title="Selecionar bairros"
-                  aria-label="Selecionar bairros"
-                  style={iconStyle}
-                >
-                  <IconSettings size={18} />
-                </ActionIcon>
-              </Group>
+            </Group>
+            <ActionIcon
+              variant="default"
+              size="lg"
+              onClick={toggleTheme}
+              title="Alternar tema"
+              aria-label="Alternar tema"
+              style={iconStyle}
+            >
+              {mounted ? (
+                computedColorScheme === "dark" ? (
+                  <IconSun size={18} />
+                ) : (
+                  <IconMoon size={18} />
+                )
+              ) : (
+                <IconMoon size={18} />
+              )}
+            </ActionIcon>
+            <Group visibleFrom="lg">
+            <ActionIcon
+              variant="default"
+              size="lg"
+              onClick={handleBairroClick}
+              title="Selecionar bairros"
+              aria-label="Selecionar bairros"
+              style={iconStyle}
+            >
+              <IconSettings size={18} />
+            </ActionIcon>
             </Group>
             <Burger
               opened={opened}

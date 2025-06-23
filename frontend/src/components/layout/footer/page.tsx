@@ -1,42 +1,20 @@
 'use client';
 
 import { IconBrandInstagram, IconBrandTwitter, IconBrandYoutube } from '@tabler/icons-react';
-import { ActionIcon, Container, Group, Text, useMantineColorScheme, useComputedColorScheme, Box } from '@mantine/core';
+import { ActionIcon, Container, Group, Text, useMantineColorScheme, useComputedColorScheme, Box, Anchor, Divider } from '@mantine/core';
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import classes from './FooterLinks.module.css';
 
-const data = [
-  {
-    title: 'About',
-    links: [
-      { label: 'Features', link: '#' },
-      { label: 'Pricing', link: '#' },
-      { label: 'Support', link: '#' },
-      { label: 'Forums', link: '#' },
-    ],
-  },
-  {
-    title: 'Project',
-    links: [
-      { label: 'Contribute', link: '#' },
-      { label: 'Media assets', link: '#' },
-      { label: 'Changelog', link: '#' },
-      { label: 'Releases', link: '#' },
-    ],
-  },
-  {
-    title: 'Community',
-    links: [
-      { label: 'Join Discord', link: '#' },
-      { label: 'Follow on Twitter', link: '#' },
-      { label: 'Email newsletter', link: '#' },
-      { label: 'GitHub discussions', link: '#' },
-    ],
-  },
+const navLinks = [
+  { label: 'Notícias', link: '/noticia' },
+  { label: 'Sobre', link: '/sobre' },
+  { label: 'Termos', link: '/termos' },
+  { label: 'Estatísticas', link: '/estatisticas' },
 ];
 
 export function FooterLinks() {
-  const { } = useMantineColorScheme();
+  const { setColorScheme } = useMantineColorScheme();
   const computedColorScheme = useComputedColorScheme('dark', { getInitialValueInEffect: true });
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
@@ -47,44 +25,29 @@ export function FooterLinks() {
     : '/Dark.svg';
   const logoStyle = { opacity: mounted ? 1 : 0, transition: 'opacity 0.2s' };
 
-  const groups = data.map((group) => {
-    const links = group.links.map((link, index) => (
-      <Text<'a'>
-        key={index}
-        className={classes.link}
-        component="a"
-        href={link.link}
-        onClick={(event) => event.preventDefault()}
-      >
-        {link.label}
-      </Text>
-    ));
-
-    return (
-      <div className={classes.wrapper} key={group.title}>
-        <Text className={classes.title}>{group.title}</Text>
-        {links}
-      </div>
-    );
-  });
+  const links = navLinks.map((link) => (
+    <Anchor
+      key={link.label}
+      href={link.link}
+      component={Link}
+      size="sm"
+      c="dimmed"
+      className={classes.link}
+    >
+      {link.label}
+    </Anchor>
+  ));
 
   return (
-    <Box className={classes.footer}>
-      <Container className={classes.inner}>
-        <div className={classes.logo}>
-          <img src={logoSrc} alt="Logo" width={"auto"} height={50} style={logoStyle} />
-          <Text size="xs" c="dimmed" className={classes.description}>
-            Build fully functional accessible web applications faster than ever
-          </Text>
-        </div>
-        <div className={classes.groups}>{groups}</div>
-      </Container>
-      <Container className={classes.afterFooter}>
-        <Text c="dimmed" size="sm">
-          © 2020 mantine.dev. All rights reserved.
-        </Text>
+    <Box component="footer" className={classes.footer}>
+      <Container fluid className={classes.inner}>
+        <img src={logoSrc} alt="Logo" width={"auto"} height={40} style={logoStyle} />
+        
+        <Group gap="md" className={classes.links}>
+          {links}
+        </Group>
 
-        <Group gap={0} className={classes.social} justify="flex-end" wrap="nowrap">
+        <Group gap={0} justify="flex-end" wrap="nowrap">
           <ActionIcon size="lg" color="gray" variant="subtle">
             <IconBrandTwitter size={18} stroke={1.5} />
           </ActionIcon>
@@ -95,6 +58,12 @@ export function FooterLinks() {
             <IconBrandInstagram size={18} stroke={1.5} />
           </ActionIcon>
         </Group>
+      </Container>
+      <Container>
+         <Divider my="md" />
+         <Text c="dimmed" size="sm" ta="center">
+          © 2024 Forchete. Todos os direitos reservados.
+        </Text>
       </Container>
     </Box>
   );

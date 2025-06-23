@@ -28,6 +28,12 @@
   padding: 0 var(--mantine-spacing-md);
 }
 
+@media (min-width: 768px) {
+  .searchContainer {
+    margin-left: 17rem;
+  }
+}
+
 .link {
   display: block;
   line-height: 1;
