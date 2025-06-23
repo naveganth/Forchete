@@ -1,7 +1,7 @@
 "use client";
 
 import { Container } from "@mantine/core";
-import { Pesquisa } from "../../../features/noticias/Pesquisa/Query";
+import { Pesquisa } from "@/features/noticias/Pesquisa/Query"; 
 
 export default function SearchPage() {
   return (

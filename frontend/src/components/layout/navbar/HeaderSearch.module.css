@@ -2,25 +2,36 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  height: 56px;
-  /* margin-bottom: 120px; */
+  height: rem(60px);
   background-color: var(--mantine-color-body);
-  border-bottom: 1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+  border-bottom: rem(1px) solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
   padding-left: var(--mantine-spacing-md);
   padding-right: var(--mantine-spacing-md);
 }
 
 .inner {
-  height: 56px;
+  height: rem(60px);
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.searchContainer {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  padding: 0 var(--mantine-spacing-md);
+}
+
 .link {
   display: block;
   line-height: 1;
-  padding: 8px 12px;
+  padding: rem(8px) rem(12px);
   border-radius: var(--mantine-radius-sm);
   text-decoration: none;
   color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-0));
@@ -30,4 +41,9 @@
   @mixin hover {
     background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
   }
+}
+
+.links {
+  display: flex;
+  gap: var(--mantine-spacing-sm);
 }

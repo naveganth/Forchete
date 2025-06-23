@@ -1,7 +1,7 @@
 'use client';
 
 import { IconBrandInstagram, IconBrandTwitter, IconBrandYoutube } from '@tabler/icons-react';
-import { ActionIcon, Container, Group, Text, useMantineColorScheme, useComputedColorScheme } from '@mantine/core';
+import { ActionIcon, Container, Group, Text, useMantineColorScheme, useComputedColorScheme, Box } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import classes from './FooterLinks.module.css';
 
@@ -69,7 +69,7 @@ export function FooterLinks() {
   });
 
   return (
-    <footer className={classes.footer}>
+    <Box className={classes.footer}>
       <Container className={classes.inner}>
         <div className={classes.logo}>
           <img src={logoSrc} alt="Logo" width={"auto"} height={50} style={logoStyle} />
@@ -96,6 +96,6 @@ export function FooterLinks() {
           </ActionIcon>
         </Group>
       </Container>
-    </footer>
+    </Box>
   );
 }

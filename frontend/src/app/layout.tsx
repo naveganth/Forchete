@@ -1,3 +1,5 @@
+'use client';
+
 import "@mantine/core/styles.css";
 import { HeaderSearch } from "../components/layout/navbar/page";
 import { FooterLinks } from "../components/layout/footer/page";
@@ -5,7 +7,8 @@ import {
   ColorSchemeScript,
   MantineProvider,
   mantineHtmlProps,
-  Container,
+  AppShell,
+  Box,
 } from "@mantine/core";
 import { QueryProvider } from "@/lib/queryClient";
 import { theme } from "../styles/theme";
@@ -39,9 +42,19 @@ export default function RootLayout({
       <body>
         <QueryProvider>
           <MantineProvider theme={theme} defaultColorScheme="auto">
-            <HeaderSearch />
-            {children}
-            <FooterLinks />
+            <Box style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+              <AppShell
+                header={{ height: 60 }}
+                padding="md"
+                style={{ flex: 1 }}
+              >
+                <AppShell.Header>
+                  <HeaderSearch />
+                </AppShell.Header>
+                <AppShell.Main>{children}</AppShell.Main>
+              </AppShell>
+              <FooterLinks />
+            </Box>
           </MantineProvider>
         </QueryProvider>
       </body>

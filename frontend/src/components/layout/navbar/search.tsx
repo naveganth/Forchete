@@ -1,7 +1,6 @@
-import { TextInput } from '@mantine/core';
+import { TextInput, rem } from '@mantine/core';
 import { IconSearch } from '@tabler/icons-react';
 import { useState } from 'react';
-import classes from './HeaderSearch.module.css';
 import { useRouter } from 'next/navigation';
 
 export function Search() {
@@ -9,16 +8,15 @@ export function Search() {
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleSearch = (value: string) => {
-    if (value) {
+    if (value.trim()) {
       router.push(`/search?q=${encodeURIComponent(value)}`);
     }
   };
 
   return (
     <TextInput
-      className={classes.search}
-      placeholder="Buscar..."
-      leftSection={<IconSearch size={16} stroke={1.5} />}
+      placeholder="Buscar notícias..."
+      leftSection={<IconSearch style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
       value={searchTerm}
       onChange={(event) => setSearchTerm(event.currentTarget.value)}
       onKeyDown={(event) => {
@@ -29,8 +27,8 @@ export function Search() {
       }}
       size="md"
       radius="xl"
-      ml={80}
-      w={350}
+      w="100%"
+      maw={rem(400)}
     />
   );
 }
