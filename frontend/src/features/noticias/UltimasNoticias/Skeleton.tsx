@@ -17,7 +17,7 @@ export function LatestNewsSkeleton({ count = 5 }: { count?: number }) {
               <Grid>
                 <Grid.Col span={{ base: 12, sm: 4 }}>
                   <Box pos="relative">
-                    <Skeleton height={150} />
+                    <Skeleton height={150} style={{ position: "absolute", inset: 0 }} />
                   </Box>
                 </Grid.Col>
                 <Grid.Col span={{ base: 12, sm: 8 }}>
