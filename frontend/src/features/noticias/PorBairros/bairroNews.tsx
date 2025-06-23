@@ -18,13 +18,13 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import Cookies from "js-cookie";
-import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 import { useNewsByBairro } from "../../../hooks/use-bairro-news";
 import { Noticia } from "@/types/noticia";
 import React from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/pt-br";
+import { NoticiasSkeleton } from "./NoticiasSkeleton";
 
 dayjs.extend(relativeTime);
 dayjs.locale("pt-br");
@@ -71,6 +71,8 @@ function NewsItem({ item }: { item: Noticia }) {
 
 export function BairroNews() {
   const [selectedBairros, setSelectedBairros] = useState<string[]>([]);
+  const [visibleCount] = useState(11);
+  const [reloading, setReloading] = useState(false);
   const [opened, { toggle }] = useDisclosure(false);
 
   useEffect(() => {
@@ -100,11 +102,21 @@ export function BairroNews() {
     };
   }, []);
 
+  useEffect(() => {
+    setReloading(true);
+  }, [selectedBairros]);
+
   const { news, loading, error } = useNewsByBairro(selectedBairros);
 
+  useEffect(() => {
+    if (!loading && reloading) {
+      setReloading(false);
+    }
+  }, [loading, reloading]);
+
   const renderContent = () => {
-    if (loading) {
-      return <Loader variant="dots" />;
+    if (loading || reloading) {
+      return <NoticiasSkeleton />;
     }
     if (error) {
       return (
@@ -127,16 +139,16 @@ export function BairroNews() {
             </Text>
         )
     }
-    return news.map((item, idx) => (
+    return news.slice(0, visibleCount).map((item, idx) => (
       <React.Fragment key={item.id}>
         <NewsItem item={item} />
-        {idx < news.length - 1 && <Divider my="sm" />}
+        {idx < Math.min(news.length, visibleCount) - 1 && <Divider my="sm" />}
       </React.Fragment>
     ));
   };
 
   return (
-    <Card shadow="sm" padding="lg" radius="md" withBorder>
+    <Card shadow="sm" padding="lg" radius="md" withBorder style={{ position: 'sticky', top: 24, zIndex: 2 }}>
       <Stack>
         <Title order={3} mb="md">
           Notícias dos seus bairros
@@ -144,37 +156,6 @@ export function BairroNews() {
         <Divider mb="sm" />
 
         {renderContent()}
-
-        {!loading && !error && news.length > 0 && (
-          <>
-            <Button
-              variant="subtle"
-              fullWidth
-              rightSection={
-                opened ? <IconChevronUp size={14} /> : <IconChevronDown size={14} />
-              }
-              onClick={toggle}
-              px={0}
-              mt="md"
-              style={{
-                justifyContent: "space-between",
-                fontWeight: 500,
-                color: "#b00000",
-                background: "#fff6f6",
-                borderRadius: 8,
-              }}
-            >
-              Mais conteúdos recomendados
-            </Button>
-            <Collapse in={opened}>
-              <Stack mt="md">
-                <Text size="sm" color="dimmed">
-                  Mais notícias recomendadas (em desenvolvimento)...
-                </Text>
-              </Stack>
-            </Collapse>
-          </>
-        )}
       </Stack>
     </Card>
   );
