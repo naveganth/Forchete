@@ -57,7 +57,6 @@ export function FirstVisitModal({
       shadow="xl"
       overlayProps={{ blur: 3, opacity: 0.5 }}
       padding={0}
-      trapFocus={false}
       transitionProps={{ transition: "pop", duration: 200 }}
     >
       <Box p="xl">
@@ -85,7 +84,7 @@ export function FirstVisitModal({
             value={bairros}
             onChange={handleBairrosChange}
             searchable
-            comboboxProps={{ withinPortal: true, shadow: "md" }}
+            comboboxProps={{ withinPortal: false, shadow: "md" }}
             maxDropdownHeight={300}
             clearable
             size="md"
