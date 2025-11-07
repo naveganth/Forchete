@@ -1,38 +1,59 @@
-# Forchete
+# Forchete: Full-Stack News Aggregator
 
 <p align="center">
   <img src="showcase.gif" alt="Forchete Demo"/>
 </p>
 
-Agregador de notícias que coleta manchetes, notícias e postagens de todos os portais de Macapá e os organiza em artigos a serem disponibilizados em um portal.
+**Forchete** is a full-stack news aggregation platform that automatically scrapes, organizes, and displays articles from various news portals in Macapá, Brazil.
 
-## Stack Utilizada
+This project demonstrates a modern, decoupled architecture, combining a high-performance **Rust backend** with a dynamic **Next.js/React frontend**. The entire backend is containerized with **Docker** for reliable and reproducible deployment.
 
-**Front-end:**
-* [Next.js](https://nextjs.org/)
-* [React](https://react.dev/)
-* [TypeScript](https://www.typescriptlang.org/)
-* [Mantine](https://mantine.dev/)
-* [React Query](https://tanstack.com/query/latest)
+## Key Features
 
-**Back-end:**
-* [Rust](https://www.rust-lang.org/) (composto por workspaces: `api`, `scraper`, `db`, `noticia`)
-* [MySQL](https://www.mysql.com/)
+* **Automated Content Aggregation**: A Rust-based `scraper` service periodically fetches and parses new articles.
+* **Decoupled Backend API**: A modular Rust workspace provides a clean REST API (`api`) to serve content.
+* **Dynamic & Responsive Frontend**: A server-side rendered (SSR) **Next.js** application provides a fast, modern user experience.
+* **Data Persistence**: Uses a **MySQL** database, managed via Docker, to store articles and related data.
+* **Containerized Deployment**: The entire backend, including the database, is managed with **Docker Compose** for easy setup and production-like development.
 
-## Rodando o Projeto
+## Technical Architecture & Tech Stack
 
-### Pré-requisitos
+This project is built with a clear separation of concerns between the backend and frontend.
 
-* [Node.js](https://nodejs.org/en) (para o front-end)
-* [Docker](https://www.docker.com/) e [Docker Compose](https://docs.docker.com/compose/) (para o back-end e banco de dados)
+### **Back-end**
 
-### Back-end (com Docker)
+* **Language**: **Rust**
+* **Architecture**: Built as a **Rust Workspace** with modular components:
+    * `api`: The core REST API service.
+    * `scraper`: The standalone web scraping service.
+    * `db`: Crate for database connection logic and schemas.
+    * `noticia`: Crate defining the core "news" data structures.
+* **Database**: **MySQL**
+* **Containerization**: **Docker & Docker Compose**
 
-O back-end e o banco de dados podem ser iniciados usando Docker Compose.
+### **Front-end**
+
+* **Framework**: **Next.js**
+* **Language**: **TypeScript**
+* **UI**: **React** & **Mantine** UI Kit
+* **State Management**: **React Query** (TanStack Query) for asynchronous state management and server-side data fetching.
+
+## Getting Started
+
+### Prerequisites
+
+* [Git](https://git-scm.com/)
+* [Node.js](https://nodejs.org/en) (for the front-end)
+* [Docker](https://www.docker.com/) & [Docker Compose](https://docs.docker.com/compose/) (for the back-end)
+
+### 1. Run the Back-end & Database (Docker)
+
+The simplest way to run the entire backend is with Docker Compose.
 
 ```bash
-# Navegue até a pasta 'backend'
-cd backend
+# Clone the repository
+git clone [https://github.com/your-username/forchete.git](https://github.com/your-username/forchete.git)
+cd forchete/backend
 
-# Suba os serviços
-docker-compose up -d
+# Build and start the containers in detached mode
+docker compose up -d
