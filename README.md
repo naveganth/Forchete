@@ -1,7 +1,7 @@
 # Forchete
 
 <p align="center">
-  <img src="URL_TO_YOUR_GIF_HERE" alt="Forchete Demo"/>
+  <img src="showcase.gif" alt="Forchete Demo"/>
 </p>
 
 Agregador de notícias que coleta manchetes, notícias e postagens de todos os portais de Macapá e os organiza em artigos a serem disponibilizados em um portal.
