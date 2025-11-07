@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-  <strong><a href="https://forchete.gabrielataide.com/">View the Live Demo</a></strong>
+  <strong><a href="https://forchete.gabrielataide.com/">View the Real Thing Live</a></strong>
 </p>
 
 **Forchete** is a full-stack news aggregation platform that automatically scrapes, organizes, and displays articles from various news portals in Macapá, Brazil.
